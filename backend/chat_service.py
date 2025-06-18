@@ -186,22 +186,6 @@ class DaisyDukeBotService:
             # Define available functions for OpenAI
             tools = [
                 {
-                    "type": "function",
-                    "function": {
-                        "name": "get_current_weather",
-                        "description": "Get current weather information for the festival location",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "location": {
-                                    "type": "string",
-                                    "description": "Location to get weather for (defaults to Wildwood, NJ)"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
                     "type": "function", 
                     "function": {
                         "name": "get_group_locations",
