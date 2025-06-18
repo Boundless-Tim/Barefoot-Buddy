@@ -20,7 +20,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import axios from 'axios';
-import Map, { Marker } from 'react-map-gl';
+import Map from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
