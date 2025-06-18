@@ -1,16 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { Beer, Trophy, Plus, RotateCcw, Crown } from 'lucide-react';
-import { mockDrinkRound } from '../data/mock';
+import { Beer, Trophy, Plus, RotateCcw, Crown, Loader2 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const DrinkRoundTracker = () => {
-  const [drinkData, setDrinkData] = useState(mockDrinkRound);
+  const [drinkData, setDrinkData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [newParticipant, setNewParticipant] = useState('');
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchDrinkRoundData();
+  }, []);
+
+  const fetchDrinkRoundData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_BASE_URL}/api/drinks/round`);
+      setDrinkData(response.data);
+    } catch (error) {
+      console.error('Error fetching drink round data:', error);
+      // Fallback to mock data structure
+      setDrinkData({
+        participants: ['Sarah', 'Jake', 'Emma', 'Mike', 'Ashley'],
+        currentRound: 2,
+        nextUp: 'Jake',
+        lastCompleted: 'Emma',
+        barefootPoints: {
+          'Sarah': 15,
+          'Jake': 12,
+          'Emma': 18,
+          'Mike': 9,
+          'Ashley': 6
+        },
+        roundHistory: []
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const addParticipant = () => {
     if (newParticipant.trim() && !drinkData.participants.includes(newParticipant.trim())) {
