@@ -100,5 +100,6 @@ class WeatherService:
             'windSpeed': 8,
             'uvIndex': 6,
             'icon': 'sun',
-            'daisyComment': "Perfect beach weather, sugar! Time to get your boots sandy!"
+            'daisyComment': "Perfect beach weather, sugar! Time to get your boots sandy!",
+            'isLive': False  # Flag to indicate this is mock data
         }
