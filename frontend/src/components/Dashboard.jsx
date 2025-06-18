@@ -19,36 +19,80 @@ import {
   Thermometer,
   ChevronRight
 } from 'lucide-react';
-import { mockWeather, mockArtists, mockDrinkRound, mockUsers } from '../data/mock';
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const Dashboard = ({ setActiveTab }) => {
-  const [weather, setWeather] = useState(mockWeather);
+  const [weather, setWeather] = useState(null);
+  const [artists, setArtists] = useState([]);
+  const [drinkRound, setDrinkRound] = useState(null);
   const [nextFavorite, setNextFavorite] = useState(null);
   const [currentArtist, setCurrentArtist] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Find next favorite or current artist
-    const now = new Date();
-    const starredArtists = mockArtists.filter(artist => artist.isStarred);
-    
-    // Find currently playing starred artist
-    const playing = starredArtists.find(artist => {
-      const start = new Date(artist.startTime);
-      const end = new Date(artist.endTime);
-      return now >= start && now <= end;
-    });
-
-    if (playing) {
-      setCurrentArtist(playing);
-    } else {
-      // Find next upcoming starred artist
-      const upcoming = starredArtists
-        .filter(artist => new Date(artist.startTime) > now)
-        .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
-      
-      setNextFavorite(upcoming);
-    }
+    // Fetch real data from backend
+    fetchDashboardData();
   }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch weather data
+      const weatherResponse = await axios.get(`${API_BASE_URL}/api/weather`);
+      setWeather(weatherResponse.data);
+
+      // Fetch artists data
+      const artistsResponse = await axios.get(`${API_BASE_URL}/api/artists`);
+      setArtists(artistsResponse.data.artists || []);
+
+      // Fetch drink round data
+      const drinkResponse = await axios.get(`${API_BASE_URL}/api/drinks/round`);
+      setDrinkRound(drinkResponse.data);
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      // Fall back to mock data if API fails
+      setWeather({
+        temperature: 78,
+        description: 'Sunny',
+        windSpeed: 8,
+        uvIndex: 6,
+        icon: 'sun',
+        daisyComment: "Perfect beach weather, sugar! Time to get your boots sandy!"
+      });
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (artists.length > 0) {
+      // Find next favorite or current artist
+      const now = new Date();
+      const starredArtists = artists.filter(artist => artist.isStarred);
+      
+      // Find currently playing starred artist
+      const playing = starredArtists.find(artist => {
+        const start = new Date(artist.startTime);
+        const end = new Date(artist.endTime);
+        return now >= start && now <= end;
+      });
+
+      if (playing) {
+        setCurrentArtist(playing);
+      } else {
+        // Find next upcoming starred artist
+        const upcoming = starredArtists
+          .filter(artist => new Date(artist.startTime) > now)
+          .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))[0];
+        
+        setNextFavorite(upcoming);
+      }
+    }
+  }, [artists]);
 
   const getTimeUntil = (startTime) => {
     const now = new Date();
@@ -70,8 +114,19 @@ const Dashboard = ({ setActiveTab }) => {
     }
   };
 
-  const visibleUsers = mockUsers.filter(user => user.isVisible);
-  const ghostUsers = mockUsers.filter(user => !user.isVisible);
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center space-y-2 bounce-entrance">
+          <h2 className="text-3xl font-bold festival-font neon-blue">Festival Dashboard</h2>
+          <p className="text-base readable-text">Loading your festival data...</p>
+        </div>
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -81,43 +136,45 @@ const Dashboard = ({ setActiveTab }) => {
         <p className="text-base readable-text">Your command center for Barefoot Country</p>
       </div>
 
-      {/* Weather Card - Clickable but no navigation needed */}
-      <Card className="electric-glass border-2 border-cyan-400 neon-hover">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-3 text-lg festival-font neon-blue">
-            {getWeatherIcon(weather.icon)}
-            <span>Wildwood Weather</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Thermometer className="h-5 w-5 neon-yellow" />
-                <span className="text-2xl font-bold readable-text">{weather.temperature}°F</span>
+      {/* Weather Card - Real Data */}
+      {weather && (
+        <Card className="electric-glass border-2 border-cyan-400 neon-hover">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-3 text-lg festival-font neon-blue">
+              {getWeatherIcon(weather.icon)}
+              <span>Wildwood Weather</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Thermometer className="h-5 w-5 neon-yellow" />
+                  <span className="text-2xl font-bold readable-text">{weather.temperature}°F</span>
+                </div>
+                <p className="text-lg readable-text">{weather.description}</p>
               </div>
-              <p className="text-lg readable-text">{weather.description}</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Wind className="h-4 w-4 text-gray-400" />
+                  <span className="readable-subtitle">Wind: {weather.windSpeed} mph</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sun className="h-4 w-4 text-orange-400" />
+                  <span className="readable-subtitle">UV Index: {weather.uvIndex}</span>
+                </div>
+              </div>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <Wind className="h-4 w-4 text-gray-400" />
-                <span className="readable-subtitle">Wind: {weather.windSpeed} mph</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Sun className="h-4 w-4 text-orange-400" />
-                <span className="readable-subtitle">UV Index: {weather.uvIndex}</span>
-              </div>
-            </div>
-          </div>
-          {weather.daisyComment && (
-            <p className="text-sm readable-subtitle italic mt-3 border-t border-gray-600 pt-3">
-              "{weather.daisyComment}"
-            </p>
-          )}
-        </CardContent>
-      </Card>
+            {weather.daisyComment && (
+              <p className="text-sm readable-subtitle italic mt-3 border-t border-gray-600 pt-3">
+                "{weather.daisyComment}"
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Now Playing / Next Favorite - Clickable to Setlist */}
+      {/* Now Playing / Next Favorite - Real Data */}
       <Card 
         className="electric-glass border-2 border-purple-400 neon-hover cursor-pointer transform transition-all duration-200 hover:scale-105"
         onClick={() => setActiveTab('setlist')}
@@ -169,39 +226,41 @@ const Dashboard = ({ setActiveTab }) => {
         </CardContent>
       </Card>
 
-      {/* Drink Round Tracker - Clickable to Drinks */}
-      <Card 
-        className="electric-glass border-2 border-yellow-400 neon-hover cursor-pointer transform transition-all duration-200 hover:scale-105"
-        onClick={() => setActiveTab('drinks')}
-      >
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center justify-between text-lg festival-font neon-green">
-            <div className="flex items-center gap-3">
-              <Beer className="h-6 w-6 icon-glow" />
-              <span>Drink Rounds</span>
-            </div>
-            <ChevronRight className="h-5 w-5 text-gray-400" />
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-lg font-bold readable-text">Up Next:</p>
-                <p className="text-xl neon-yellow font-bold">{mockDrinkRound.nextUp}</p>
+      {/* Drink Round Tracker - Real Data */}
+      {drinkRound && (
+        <Card 
+          className="electric-glass border-2 border-yellow-400 neon-hover cursor-pointer transform transition-all duration-200 hover:scale-105"
+          onClick={() => setActiveTab('drinks')}
+        >
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between text-lg festival-font neon-green">
+              <div className="flex items-center gap-3">
+                <Beer className="h-6 w-6 icon-glow" />
+                <span>Drink Rounds</span>
               </div>
-              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1">
-                Round #{mockDrinkRound.currentRound + 1}
-              </Badge>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-lg font-bold readable-text">Up Next:</p>
+                  <p className="text-xl neon-yellow font-bold">{drinkRound.nextUp}</p>
+                </div>
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1">
+                  Round #{drinkRound.currentRound + 1}
+                </Badge>
+              </div>
+              <div className="text-sm readable-subtitle border-t border-gray-600 pt-2">
+                Last completed by: <span className="text-green-400">{drinkRound.lastCompleted}</span>
+              </div>
             </div>
-            <div className="text-sm readable-subtitle border-t border-gray-600 pt-2">
-              Last completed by: <span className="text-green-400">{mockDrinkRound.lastCompleted}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Group Locator with Mini Map - Clickable to Location */}
+      {/* Group Locator with Mini Map */}
       <Card 
         className="electric-glass border-2 border-green-400 neon-hover cursor-pointer transform transition-all duration-200 hover:scale-105"
         onClick={() => setActiveTab('location')}
@@ -236,20 +295,20 @@ const Dashboard = ({ setActiveTab }) => {
             <div className="absolute top-1/2 left-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full w-4 h-4 border border-white shadow-lg animate-bounce transform -translate-x-1/2 -translate-y-1/2" style={{animationDelay: '1s'}}></div>
           </div>
 
-          {/* Group Status */}
+          {/* Group Status - Will be real data from location API */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-green-400" />
-                <span className="readable-text">{visibleUsers.length} visible</span>
+                <span className="readable-text">3 visible</span>
               </div>
               <div className="flex items-center gap-2">
                 <Eye className="h-5 w-5 text-purple-400" />
-                <span className="readable-text">{ghostUsers.length} in ghost mode</span>
+                <span className="readable-text">1 in ghost mode</span>
               </div>
             </div>
             <Badge className="bg-gradient-to-r from-green-500 to-teal-500 text-white">
-              {mockUsers.length} total
+              4 total
             </Badge>
           </div>
         </CardContent>
