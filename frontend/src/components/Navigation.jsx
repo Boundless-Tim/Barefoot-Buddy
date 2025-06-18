@@ -3,46 +3,69 @@ import { MapPin, Clock, Beer, MessageCircle, ExternalLink } from 'lucide-react';
 
 const Navigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
-    { id: 'location', label: 'Location', icon: MapPin, emoji: '🗺️' },
-    { id: 'setlist', label: 'Setlist', icon: Clock, emoji: '🎵' },
-    { id: 'drinks', label: 'Drinks', icon: Beer, emoji: '🍻' },
-    { id: 'daisy', label: 'Daisy', icon: MessageCircle, emoji: '🤖' },
-    { id: 'links', label: 'Links', icon: ExternalLink, emoji: '🔗' }
+    { id: 'location', label: 'Location', icon: MapPin, emoji: '🗺️', color: 'from-blue-500 to-cyan-500' },
+    { id: 'setlist', label: 'Setlist', icon: Clock, emoji: '🎵', color: 'from-purple-500 to-pink-500' },
+    { id: 'drinks', label: 'Drinks', icon: Beer, emoji: '🍻', color: 'from-amber-500 to-orange-500' },
+    { id: 'daisy', label: 'Daisy', icon: MessageCircle, emoji: '🤖', color: 'from-pink-500 to-rose-500' },
+    { id: 'links', label: 'Links', icon: ExternalLink, emoji: '🔗', color: 'from-green-500 to-teal-500' }
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-orange-200 shadow-lg z-50">
-      <div className="flex justify-around items-center py-2 max-w-md mx-auto">
-        {tabs.map((tab) => {
-          const IconComponent = tab.icon;
-          const isActive = activeTab === tab.id;
-          
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
-                isActive 
-                  ? 'bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-600 scale-105' 
-                  : 'text-gray-500 hover:text-orange-500 hover:bg-orange-50'
-              }`}
-            >
-              <div className="relative">
-                <IconComponent className={`h-5 w-5 ${isActive ? 'animate-pulse' : ''}`} />
+    <div className="fixed bottom-0 left-0 right-0 z-50">
+      {/* Glowing background */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-gray-900 to-transparent opacity-90"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-yellow-500/20 to-red-500/20 blur-xl"></div>
+      
+      <div className="relative glass-effect border-t-4 border-gradient-to-r from-orange-400 to-pink-400 backdrop-blur-2xl">
+        <div className="flex justify-around items-center py-3 max-w-md mx-auto px-4">
+          {tabs.map((tab) => {
+            const IconComponent = tab.icon;
+            const isActive = activeTab === tab.id;
+            
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 transform ${
+                  isActive 
+                    ? `bg-gradient-to-r ${tab.color} text-white scale-110 shadow-2xl neon-border` 
+                    : 'text-gray-300 hover:text-white hover:bg-white/10 hover:scale-105'
+                }`}
+              >
+                {/* Pulsing background for active tab */}
                 {isActive && (
-                  <div className="absolute -top-1 -right-1 text-xs animate-bounce">
-                    {tab.emoji}
-                  </div>
+                  <div className={`absolute inset-0 bg-gradient-to-r ${tab.color} opacity-30 rounded-2xl blur animate-pulse`}></div>
                 )}
-              </div>
-              <span className={`text-xs font-medium mt-1 ${
-                isActive ? 'font-bold' : ''
-              }`}>
-                {tab.label}
-              </span>
-            </button>
-          );
-        })}
+                
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="relative mb-1">
+                    <IconComponent className={`h-6 w-6 ${isActive ? 'animate-bounce' : ''} transition-all duration-300`} />
+                    {isActive && (
+                      <div className="absolute -top-1 -right-1 text-xl animate-spin">
+                        {tab.emoji}
+                      </div>
+                    )}
+                  </div>
+                  <span className={`text-xs font-bold festival-font transition-all duration-300 ${
+                    isActive ? 'text-white glow-text' : 'text-gray-300'
+                  }`}>
+                    {tab.label}
+                  </span>
+                  
+                  {/* Active indicator */}
+                  {isActive && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-pulse shadow-lg"></div>
+                  )}
+                </div>
+                
+                {/* Ripple effect on tap */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                  <div className={`absolute inset-0 bg-gradient-to-r ${tab.color} opacity-0 hover:opacity-20 transition-opacity duration-300`}></div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
