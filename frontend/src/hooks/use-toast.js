@@ -102,6 +102,7 @@ function dispatch(action) {
 }
 
 function toast({
+  duration = 2000,  // Default 2 seconds
   ...props
 }) {
   const id = genId()
@@ -124,6 +125,13 @@ function toast({
       },
     },
   })
+
+  // Auto-dismiss after duration
+  if (duration > 0) {
+    setTimeout(() => {
+      dismiss()
+    }, duration)
+  }
 
   return {
     id: id,
