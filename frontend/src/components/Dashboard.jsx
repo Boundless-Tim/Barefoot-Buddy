@@ -288,70 +288,18 @@ const Dashboard = ({ setActiveTab }) => {
         <CardContent>
           {/* Mini Map */}
           <div className="relative rounded-xl h-32 overflow-hidden shadow-inner border border-cyan-300 mb-4">
-            {MAPBOX_TOKEN ? (
-              <Map
-                mapboxAccessToken={MAPBOX_TOKEN}
-                initialViewState={{
-                  longitude: -74.8157, // Wildwood, NJ
-                  latitude: 39.0056,
-                  zoom: 13
-                }}
-                style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/dark-v11"
-                interactive={false}
-              >
-                {/* Festival grounds marker */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                >
-                  <div className="w-4 h-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
-                </div>
-                
-                {/* Mock user locations around festival */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '60%',
-                    top: '40%',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                >
-                  <div className="w-3 h-3 bg-green-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '0.5s'}}></div>
-                </div>
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '40%',
-                    top: '60%',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                >
-                  <div className="w-3 h-3 bg-blue-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '1s'}}></div>
-                </div>
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '55%',
-                    top: '30%',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                >
-                  <div className="w-3 h-3 bg-red-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '1.5s'}}></div>
-                </div>
-              </Map>
-            ) : (
-              <div className="electric-gradient h-full flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-sm font-bold neon-blue">Live Festival Map</p>
-                  <p className="text-xs readable-subtitle">Tap to view full map</p>
-                </div>
+            <div className="electric-gradient h-full flex items-center justify-center relative">
+              {/* Animated location pins */}
+              <div className="absolute top-4 left-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full w-3 h-3 border border-white shadow-lg animate-bounce"></div>
+              <div className="absolute bottom-8 right-8 bg-gradient-to-r from-green-500 to-teal-500 rounded-full w-3 h-3 border border-white shadow-lg animate-bounce" style={{animationDelay: '0.5s'}}></div>
+              <div className="absolute top-1/2 left-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full w-4 h-4 border border-white shadow-lg animate-bounce transform -translate-x-1/2 -translate-y-1/2" style={{animationDelay: '1s'}}></div>
+              <div className="absolute top-6 right-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full w-2 h-2 border border-white shadow-lg animate-bounce" style={{animationDelay: '1.5s'}}></div>
+              
+              <div className="text-center">
+                <p className="text-sm font-bold neon-blue">Live Festival Map</p>
+                <p className="text-xs readable-subtitle">Tap to view full map</p>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Group Status - Will be real data from location API */}
