@@ -40,22 +40,33 @@ const Dashboard = ({ setActiveTab }) => {
     try {
       setLoading(true);
       
+      console.log('Fetching dashboard data from:', API_BASE_URL);
+      
       // Fetch weather data
+      console.log('Fetching weather...');
       const weatherResponse = await axios.get(`${API_BASE_URL}/api/weather`);
+      console.log('Weather response:', weatherResponse.data);
       setWeather(weatherResponse.data);
 
       // Fetch artists data
+      console.log('Fetching artists...');
       const artistsResponse = await axios.get(`${API_BASE_URL}/api/artists`);
+      console.log('Artists response:', artistsResponse.data);
       setArtists(artistsResponse.data.artists || []);
 
       // Fetch drink round data
+      console.log('Fetching drink round...');
       const drinkResponse = await axios.get(`${API_BASE_URL}/api/drinks/round`);
+      console.log('Drink round response:', drinkResponse.data);
       setDrinkRound(drinkResponse.data);
 
       setLoading(false);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      console.error('Error details:', error.response?.data, error.message);
+      
       // Fall back to mock data if API fails
+      console.log('Using fallback mock data');
       setWeather({
         temperature: 78,
         description: 'Sunny',
