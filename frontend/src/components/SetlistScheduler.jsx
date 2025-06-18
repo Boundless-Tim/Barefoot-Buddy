@@ -175,15 +175,15 @@ const SetlistScheduler = () => {
       <Card className="electric-glass border-2 border-purple-400 neon-border">
         <CardContent className="p-0">
           <Tabs value={activeDay} onValueChange={setActiveDay} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-black/30 rounded-none border-b border-gray-600">
+            <TabsList className="grid w-full grid-cols-4 bg-black/30 rounded-lg border border-gray-600/50">
               {days.map(day => (
                 <TabsTrigger
                   key={day}
                   value={day}
-                  className="data-[state=active]:bg-purple-500/30 data-[state=active]:text-purple-300 transition-all"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/30 data-[state=active]:to-pink-500/30 data-[state=active]:text-purple-300 data-[state=active]:border data-[state=active]:border-purple-400/50 transition-all duration-300 text-white hover:bg-white/10"
                 >
-                  <div className="text-center">
-                    <div className="font-bold">{day}</div>
+                  <div className="text-center p-2">
+                    <div className="font-bold text-sm">{day}</div>
                     <div className="text-xs opacity-70">{formatDate(day)}</div>
                   </div>
                 </TabsTrigger>
