@@ -98,7 +98,7 @@ const LocationTracker = () => {
   const sendLocationToBackend = async (latitude, longitude, accuracy = 0) => {
     try {
       setUpdating(true);
-      await axios.post(`${API_BASE_URL}/api/location/update/${userId}`, {
+      await axios.post(`${API_BASE_URL}/location/update/${userId}`, {
         latitude,
         longitude,
         accuracy,
@@ -106,7 +106,7 @@ const LocationTracker = () => {
       });
       
       // Update presence
-      await axios.post(`${API_BASE_URL}/api/presence/${userId}`, {
+      await axios.post(`${API_BASE_URL}/presence/${userId}`, {
         online: true
       });
       
