@@ -8,7 +8,7 @@ import { useToast } from '../hooks/use-toast';
 
 const SetlistScheduler = () => {
   const [artists, setArtists] = useState(mockArtists);
-  const [selectedDay, setSelectedDay] = useState('2025-06-21');
+  const [selectedDay, setSelectedDay] = useState('Thursday');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -24,8 +24,8 @@ const SetlistScheduler = () => {
           // Simulate notification for demo (if within 15 minutes)
           if (minutesUntil <= 15 && minutesUntil > 0) {
             toast({
-              title: `🎵 ${artist.name} starts soon!`,
-              description: `Starting in ${minutesUntil} minutes at ${artist.stage}! Get ready to boogie! 🤠🎶`,
+              title: `${artist.name} starts soon!`,
+              description: `Starting in ${minutesUntil} minutes at ${artist.stage}! Get ready to boogie!`,
               duration: 10000
             });
           }
@@ -42,9 +42,9 @@ const SetlistScheduler = () => {
       if (artist.id === artistId) {
         const newStarred = !artist.isStarred;
         toast({
-          title: newStarred ? "⭐ Artist Starred!" : "Star Removed",
+          title: newStarred ? "Artist Starred!" : "Star Removed",
           description: newStarred 
-            ? `You'll get notified 15 minutes before ${artist.name} performs! 🔔`
+            ? `You'll get notified 15 minutes before ${artist.name} performs!`
             : `No more notifications for ${artist.name}`,
         });
         return { ...artist, isStarred: newStarred };
@@ -73,35 +73,37 @@ const SetlistScheduler = () => {
   };
 
   const filteredArtists = artists.filter(artist => 
-    artist.startTime.startsWith(selectedDay)
+    artist.day === selectedDay
   );
 
   const starredCount = artists.filter(artist => artist.isStarred).length;
+
+  const days = ['Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-purple-600 flex items-center justify-center gap-2">
+        <h2 className="text-3xl font-bold festival-font neon-purple flex items-center justify-center gap-2">
           <Clock className="h-8 w-8" />
-          Setlist Scheduler 🎵
+          Setlist Scheduler
         </h2>
-        <p className="text-gray-600">Never miss your favorite acts! ⭐</p>
+        <p className="text-lg readable-text">Never miss your favorite acts!</p>
       </div>
 
       {/* Stats */}
-      <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
+      <Card className="electric-glass bg-gradient-to-r from-yellow-900/40 to-orange-900/40 border-2 border-yellow-400">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Star className="h-6 w-6 text-yellow-600 fill-current" />
+              <Star className="h-6 w-6 neon-yellow" />
               <div>
-                <p className="font-semibold text-yellow-800">Starred Performances</p>
-                <p className="text-sm text-yellow-600">You'll get notified 15 mins before!</p>
+                <p className="text-lg font-bold neon-yellow">Starred Performances</p>
+                <p className="text-sm readable-subtitle">You'll get notified 15 mins before!</p>
               </div>
             </div>
-            <Badge className="bg-yellow-600 text-white text-lg px-3 py-1">
-              {starredCount} ⭐
+            <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-lg px-3 py-1">
+              {starredCount}
             </Badge>
           </div>
         </CardContent>
@@ -109,50 +111,56 @@ const SetlistScheduler = () => {
 
       {/* Day Selection */}
       <div className="flex gap-2 overflow-x-auto pb-2">
-        {['2025-06-21', '2025-06-22', '2025-06-23'].map(day => (
+        {days.map(day => (
           <Button
             key={day}
             variant={selectedDay === day ? "default" : "outline"}
             className={`whitespace-nowrap ${
               selectedDay === day 
-                ? 'bg-purple-600 hover:bg-purple-700' 
-                : 'border-purple-200 text-purple-600 hover:bg-purple-50'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white' 
+                : 'border-purple-300 text-purple-300 hover:bg-purple-500/20 hover:text-white'
             }`}
             onClick={() => setSelectedDay(day)}
           >
-            {new Date(day).toLocaleDateString([], { 
-              weekday: 'short', 
-              month: 'short', 
-              day: 'numeric' 
-            })} 🗓️
+            {day}
+            <span className="ml-2">
+              {day === 'Thursday' && '6/19'}
+              {day === 'Friday' && '6/20'}
+              {day === 'Saturday' && '6/21'}
+              {day === 'Sunday' && '6/22'}
+            </span>
           </Button>
         ))}
       </div>
 
       {/* Artists List */}
       <div className="space-y-4">
-        {filteredArtists.map(artist => {
+        {filteredArtists.map((artist, index) => {
           const timeUntil = getTimeUntil(artist.startTime);
           const isUpcoming = timeUntil !== "Started" && new Date(artist.startTime) > new Date();
           
           return (
             <Card 
               key={artist.id} 
-              className={`transition-all duration-300 hover:shadow-lg ${
-                artist.isStarred ? 'ring-2 ring-yellow-400 bg-gradient-to-r from-yellow-50 to-orange-50' : ''
+              className={`electric-glass transition-all duration-300 hover:scale-105 border-2 neon-hover ${
+                artist.isStarred ? 'border-yellow-400 bg-gradient-to-r from-yellow-900/30 to-orange-900/30' : 'border-cyan-300'
               }`}
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
-                  {/* Artist Image */}
-                  <div className="w-20 h-20 bg-gradient-to-br from-purple-200 to-pink-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <div className="text-2xl">🎤</div>
+                  {/* Stage indicator */}
+                  <div className={`w-20 h-20 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold text-center leading-tight ${
+                    artist.stage === 'Coors Light Main Stage' 
+                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' 
+                      : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
+                  }`}>
+                    {artist.stage === 'Coors Light Main Stage' ? 'MAIN STAGE' : 'TEQUILA STAGE'}
                   </div>
                   
                   {/* Artist Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-xl font-bold text-gray-900 truncate pr-2">
+                      <h3 className="text-xl font-bold readable-text truncate pr-2">
                         {artist.name}
                       </h3>
                       <Button
@@ -161,8 +169,8 @@ const SetlistScheduler = () => {
                         onClick={() => toggleStar(artist.id)}
                         className={`flex-shrink-0 ${
                           artist.isStarred 
-                            ? 'text-yellow-600 hover:text-yellow-700' 
-                            : 'text-gray-400 hover:text-yellow-600'
+                            ? 'text-yellow-400 hover:text-yellow-300' 
+                            : 'text-gray-400 hover:text-yellow-400'
                         }`}
                       >
                         <Star className={`h-6 w-6 ${artist.isStarred ? 'fill-current' : ''}`} />
@@ -170,31 +178,31 @@ const SetlistScheduler = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-4 text-sm">
                         <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {formatTime(artist.startTime)} - {formatTime(artist.endTime)}
+                          <Clock className="h-4 w-4 text-gray-400" />
+                          <span className="readable-subtitle">{formatTime(artist.startTime)} - {formatTime(artist.endTime)}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {artist.stage}
+                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <span className="readable-subtitle">{artist.stage}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-2">
                         {isUpcoming && (
-                          <Badge variant="outline" className="text-green-700 border-green-300 bg-green-50">
+                          <Badge variant="outline" className="text-green-400 border-green-400 bg-green-900/20">
                             <Clock className="h-3 w-3 mr-1" />
                             {timeUntil}
                           </Badge>
                         )}
                         {timeUntil === "Started" && (
                           <Badge className="bg-red-600 text-white animate-pulse">
-                            🔴 LIVE NOW
+                            LIVE NOW
                           </Badge>
                         )}
                         {artist.isStarred && (
-                          <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-300">
+                          <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border border-yellow-400">
                             <Bell className="h-3 w-3 mr-1" />
                             Notifications On
                           </Badge>
@@ -210,11 +218,11 @@ const SetlistScheduler = () => {
       </div>
 
       {filteredArtists.length === 0 && (
-        <Card>
+        <Card className="electric-glass border-2 border-gray-500">
           <CardContent className="p-8 text-center">
             <div className="text-6xl mb-4">🎵</div>
-            <p className="text-gray-500">No performances scheduled for this day yet!</p>
-            <p className="text-sm text-gray-400 mt-2">Check back soon for updates! 🤠</p>
+            <p className="readable-text text-lg">No performances scheduled for this day yet!</p>
+            <p className="readable-subtitle text-sm mt-2">Check back soon for updates!</p>
           </CardContent>
         </Card>
       )}
