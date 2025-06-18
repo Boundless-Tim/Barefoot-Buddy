@@ -126,9 +126,36 @@ const DrinkRoundTracker = () => {
   };
 
   const getTopPlayer = () => {
-    return Object.entries(drinkData.barefootPoints)
-      .sort(([,a], [,b]) => b - a)[0];
+    if (!drinkData || !drinkData.barefootPoints) return ['Unknown', 0];
+    const entries = Object.entries(drinkData.barefootPoints);
+    if (entries.length === 0) return ['Unknown', 0];
+    return entries.sort(([,a], [,b]) => b - a)[0];
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center space-y-2 bounce-entrance">
+          <h2 className="text-3xl font-bold festival-font neon-blue">Drink Round Tracker</h2>
+          <p className="text-base readable-text">Loading the drink crew...</p>
+        </div>
+        <div className="flex justify-center">
+          <Loader2 className="h-12 w-12 animate-spin neon-blue" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!drinkData) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center space-y-2">
+          <h2 className="text-3xl font-bold festival-font neon-blue">Drink Round Tracker</h2>
+          <p className="text-base readable-text">No drink round data available</p>
+        </div>
+      </div>
+    );
+  }
 
   const [topPlayerName, topPlayerPoints] = getTopPlayer();
 
