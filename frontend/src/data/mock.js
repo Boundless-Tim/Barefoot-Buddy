@@ -79,6 +79,7 @@ export const mockDrinkRound = {
   participants: ['Sarah', 'Jake', 'Emma', 'Mike', 'Ashley'],
   currentRound: 2,
   nextUp: 'Jake',
+  lastCompleted: 'Emma',
   barefootPoints: {
     'Sarah': 15,
     'Jake': 12,
