@@ -290,23 +290,43 @@ const Dashboard = ({ setActiveTab }) => {
         </CardHeader>
         <CardContent>
           {/* Mini Map */}
-          <div className="relative electric-gradient rounded-xl h-32 flex items-center justify-center overflow-hidden shadow-inner border border-cyan-300 mb-4">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-2 left-2 w-3 h-3 neon-blue rounded-full animate-pulse"></div>
-              <div className="absolute top-4 right-6 w-2 h-2 neon-yellow rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
-              <div className="absolute bottom-6 left-4 w-4 h-4 neon-green rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
-              <div className="absolute bottom-2 right-2 w-2 h-2 neon-blue rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
-            </div>
-            
-            <div className="relative z-10 text-center">
-              <p className="text-sm font-bold neon-blue">Live Festival Map</p>
-              <p className="text-xs readable-subtitle">Tap to view full map</p>
-            </div>
-            
-            {/* Mock location pins */}
-            <div className="absolute top-4 left-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full w-3 h-3 border border-white shadow-lg animate-bounce"></div>
-            <div className="absolute bottom-8 right-8 bg-gradient-to-r from-green-500 to-teal-500 rounded-full w-3 h-3 border border-white shadow-lg animate-bounce" style={{animationDelay: '0.5s'}}></div>
-            <div className="absolute top-1/2 left-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full w-4 h-4 border border-white shadow-lg animate-bounce transform -translate-x-1/2 -translate-y-1/2" style={{animationDelay: '1s'}}></div>
+          <div className="relative rounded-xl h-32 overflow-hidden shadow-inner border border-cyan-300 mb-4">
+            {MAPBOX_TOKEN ? (
+              <Map
+                mapboxAccessToken={MAPBOX_TOKEN}
+                initialViewState={{
+                  longitude: -74.8157, // Wildwood, NJ
+                  latitude: 39.0056,
+                  zoom: 13
+                }}
+                style={{ width: '100%', height: '100%' }}
+                mapStyle="mapbox://styles/mapbox/dark-v11"
+                interactive={false}
+              >
+                {/* Festival grounds marker */}
+                <Marker longitude={-74.8157} latitude={39.0056} anchor="center">
+                  <div className="w-4 h-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
+                </Marker>
+                
+                {/* Mock user locations around festival */}
+                <Marker longitude={-74.8150} latitude={39.0060} anchor="center">
+                  <div className="w-3 h-3 bg-green-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '0.5s'}}></div>
+                </Marker>
+                <Marker longitude={-74.8165} latitude={39.0052} anchor="center">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '1s'}}></div>
+                </Marker>
+                <Marker longitude={-74.8155} latitude={39.0065} anchor="center">
+                  <div className="w-3 h-3 bg-red-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '1.5s'}}></div>
+                </Marker>
+              </Map>
+            ) : (
+              <div className="electric-gradient h-full flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-sm font-bold neon-blue">Live Festival Map</p>
+                  <p className="text-xs readable-subtitle">Tap to view full map</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Group Status - Will be real data from location API */}
