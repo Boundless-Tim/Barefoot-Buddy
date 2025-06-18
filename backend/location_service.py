@@ -6,11 +6,39 @@ from firebase_admin import credentials, db
 import os
 import time
 import json
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Any
 import logging
 from motor.motor_asyncio import AsyncIOMotorClient
 
 logger = logging.getLogger(__name__)
+
+# Mock Firebase Reference for testing when Firebase auth fails
+class MockFirebaseReference:
+    def __init__(self, path: str):
+        self.path = path
+        self.data = {}
+        logger.info(f"Created mock Firebase reference for {path}")
+    
+    def child(self, path: str):
+        if path not in self.data:
+            self.data[path] = {}
+        return MockFirebaseReference(f"{self.path}/{path}")
+    
+    def set(self, value: Any):
+        logger.info(f"Mock Firebase set: {self.path} = {value}")
+        return True
+    
+    def update(self, value: Dict):
+        logger.info(f"Mock Firebase update: {self.path} = {value}")
+        return True
+    
+    def get(self):
+        logger.info(f"Mock Firebase get: {self.path}")
+        return {}
+    
+    def delete(self):
+        logger.info(f"Mock Firebase delete: {self.path}")
+        return True
 
 class LocationService:
     def __init__(self, db_client: AsyncIOMotorClient):
