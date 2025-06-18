@@ -431,7 +431,71 @@ async def populate_artists_data():
             "isStarred": True,
             "day": "Thursday"
         },
-        # Add more artists (Friday, Saturday, Sunday)...
+        # Thursday, June 19 - Patrón Tequila Stage
+        {
+            "id": "7",
+            "name": "12/OC",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-19T20:00:00",
+            "endTime": "2025-06-19T21:30:00",
+            "isStarred": False,
+            "day": "Thursday"
+        },
+        {
+            "id": "8",
+            "name": "Kevin Mac",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-19T21:30:00",
+            "endTime": "2025-06-19T23:00:00",
+            "isStarred": False,
+            "day": "Thursday"
+        },
+        # Friday, June 20 - Coors Light Main Stage
+        {
+            "id": "9",
+            "name": "Gillian Smith",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-20T15:00:00",
+            "endTime": "2025-06-20T16:00:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        {
+            "id": "10",
+            "name": "Avery Anna",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-20T16:00:00",
+            "endTime": "2025-06-20T17:30:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        {
+            "id": "11",
+            "name": "George Birge",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-20T17:30:00",
+            "endTime": "2025-06-20T19:00:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        {
+            "id": "12",
+            "name": "Sam Barber",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-20T19:00:00",
+            "endTime": "2025-06-20T20:30:00",
+            "isStarred": True,
+            "day": "Friday"
+        },
+        {
+            "id": "13",
+            "name": "Warren Zeiders",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-20T20:30:00",
+            "endTime": "2025-06-20T22:00:00",
+            "isStarred": True,
+            "day": "Friday"
+        },
         {
             "id": "14",
             "name": "Lainey Wilson",
@@ -440,6 +504,98 @@ async def populate_artists_data():
             "endTime": "2025-06-20T23:30:00",
             "isStarred": True,
             "day": "Friday"
+        },
+        # Friday, June 20 - Patrón Tequila Stage
+        {
+            "id": "15",
+            "name": "Samantha Spanò",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-20T13:30:00",
+            "endTime": "2025-06-20T14:30:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        {
+            "id": "16",
+            "name": "Lauren Davidson",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-20T14:30:00",
+            "endTime": "2025-06-20T15:30:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        {
+            "id": "17",
+            "name": "Kaitlin Butts",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-20T15:30:00",
+            "endTime": "2025-06-20T16:30:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        {
+            "id": "18",
+            "name": "LANCO",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-20T16:30:00",
+            "endTime": "2025-06-20T18:00:00",
+            "isStarred": True,
+            "day": "Friday"
+        },
+        {
+            "id": "19",
+            "name": "Meghan Patrick",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-20T20:00:00",
+            "endTime": "2025-06-20T21:30:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        {
+            "id": "20",
+            "name": "Whey Jennings",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-20T21:30:00",
+            "endTime": "2025-06-20T23:00:00",
+            "isStarred": False,
+            "day": "Friday"
+        },
+        # Saturday, June 21 - Coors Light Main Stage
+        {
+            "id": "21",
+            "name": "Willow Avalon",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-21T16:00:00",
+            "endTime": "2025-06-21T17:30:00",
+            "isStarred": False,
+            "day": "Saturday"
+        },
+        {
+            "id": "22",
+            "name": "Larry Fleet",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-21T17:30:00",
+            "endTime": "2025-06-21T19:00:00",
+            "isStarred": True,
+            "day": "Saturday"
+        },
+        {
+            "id": "23",
+            "name": "Boyz II Men",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-21T19:00:00",
+            "endTime": "2025-06-21T20:30:00",
+            "isStarred": True,
+            "day": "Saturday"
+        },
+        {
+            "id": "24",
+            "name": "Chris Janson",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-21T20:30:00",
+            "endTime": "2025-06-21T22:00:00",
+            "isStarred": False,
+            "day": "Saturday"
         },
         {
             "id": "25",
@@ -450,6 +606,53 @@ async def populate_artists_data():
             "isStarred": True,
             "day": "Saturday"
         },
+        # Saturday, June 21 - Patrón Tequila Stage
+        {
+            "id": "26",
+            "name": "Holdyn Barder",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-21T13:30:00",
+            "endTime": "2025-06-21T15:30:00",
+            "isStarred": False,
+            "day": "Saturday"
+        },
+        {
+            "id": "27",
+            "name": "Don Louis",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-21T15:30:00",
+            "endTime": "2025-06-21T16:30:00",
+            "isStarred": False,
+            "day": "Saturday"
+        },
+        {
+            "id": "28",
+            "name": "Chris Cagle",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-21T16:30:00",
+            "endTime": "2025-06-21T18:00:00",
+            "isStarred": False,
+            "day": "Saturday"
+        },
+        {
+            "id": "29",
+            "name": "Austin Williams",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-21T20:00:00",
+            "endTime": "2025-06-21T21:30:00",
+            "isStarred": False,
+            "day": "Saturday"
+        },
+        {
+            "id": "30",
+            "name": "Lakeview",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-21T21:30:00",
+            "endTime": "2025-06-21T23:00:00",
+            "isStarred": False,
+            "day": "Saturday"
+        },
+        # Sunday, June 22 - Coors Light Main Stage
         {
             "id": "31",
             "name": "Jelly Roll",
@@ -457,6 +660,88 @@ async def populate_artists_data():
             "startTime": "2025-06-22T22:00:00",
             "endTime": "2025-06-22T23:30:00",
             "isStarred": True,
+            "day": "Sunday"
+        },
+        {
+            "id": "32",
+            "name": "Jordan Davis",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-22T20:30:00",
+            "endTime": "2025-06-22T22:00:00",
+            "isStarred": True,
+            "day": "Sunday"
+        },
+        {
+            "id": "33",
+            "name": "Ella Langley",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-22T19:00:00",
+            "endTime": "2025-06-22T20:30:00",
+            "isStarred": False,
+            "day": "Sunday"
+        },
+        {
+            "id": "34",
+            "name": "Bayker Blankenship",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-22T17:30:00",
+            "endTime": "2025-06-22T19:00:00",
+            "isStarred": False,
+            "day": "Sunday"
+        },
+        {
+            "id": "35",
+            "name": "Davisson Brothers Band",
+            "stage": "Coors Light Main Stage",
+            "startTime": "2025-06-22T16:00:00",
+            "endTime": "2025-06-22T17:30:00",
+            "isStarred": False,
+            "day": "Sunday"
+        },
+        # Sunday, June 22 - Patrón Tequila Stage
+        {
+            "id": "36",
+            "name": "Chayce Beckham",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-22T21:30:00",
+            "endTime": "2025-06-22T23:00:00",
+            "isStarred": True,
+            "day": "Sunday"
+        },
+        {
+            "id": "37",
+            "name": "Lanie Gardner",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-22T20:00:00",
+            "endTime": "2025-06-22T21:30:00",
+            "isStarred": False,
+            "day": "Sunday"
+        },
+        {
+            "id": "38",
+            "name": "Cat Country B.O.T.B Winner",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-22T18:00:00",
+            "endTime": "2025-06-22T19:00:00",
+            "isStarred": False,
+            "day": "Sunday"
+        },
+        {
+            "id": "39",
+            "name": "Thomas Edwards",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-22T16:30:00",
+            "endTime": "2025-06-22T17:30:00",
+            "isStarred": False,
+            "day": "Sunday"
+        },
+        {
+            "id": "40",
+            "name": "The Jack Wharff Band",
+            "stage": "Patrón Tequila Stage",
+            "startTime": "2025-06-22T15:00:00",
+            "endTime": "2025-06-22T16:30:00",
+            "isStarred": False,
             "day": "Sunday"
         }
     ]
