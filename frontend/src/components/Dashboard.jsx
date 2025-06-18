@@ -29,6 +29,7 @@ const Dashboard = ({ setActiveTab }) => {
   const [drinkRound, setDrinkRound] = useState(null);
   const [nextFavorite, setNextFavorite] = useState(null);
   const [currentArtist, setCurrentArtist] = useState(null);
+  const [groupData, setGroupData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
