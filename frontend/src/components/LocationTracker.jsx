@@ -327,70 +327,50 @@ const LocationTracker = () => {
         </CardHeader>
         <CardContent>
           <div className="relative rounded-xl h-64 overflow-hidden border border-cyan-300">
-            {MAPBOX_TOKEN ? (
-              <Map
-                mapboxAccessToken={MAPBOX_TOKEN}
-                initialViewState={{
-                  longitude: currentUser ? currentUser.lng : -74.8157, // Wildwood, NJ
-                  latitude: currentUser ? currentUser.lat : 39.0056,
-                  zoom: currentUser ? 16 : 14
-                }}
-                style={{ width: '100%', height: '100%' }}
-                mapStyle="mapbox://styles/mapbox/dark-v11"
-              >
-                {/* Current User Marker */}
-                {currentUser && !ghostMode && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: '50%',
-                      top: '50%',
-                      transform: 'translate(-50%, -100%)',
-                      zIndex: 10
-                    }}
-                  >
-                    <div className="relative">
-                      <div className="w-6 h-6 bg-red-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
-                      <div className="absolute -top-2 -left-2 w-10 h-10 bg-red-500/30 rounded-full animate-ping"></div>
-                      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                        You
-                      </div>
+            <div className="electric-gradient h-full flex items-center justify-center relative">
+              {/* Current user location */}
+              {currentUser && !ghostMode && (
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="relative">
+                    <div className="w-6 h-6 bg-red-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
+                    <div className="absolute -top-2 -left-2 w-10 h-10 bg-red-500/30 rounded-full animate-ping"></div>
+                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                      You
                     </div>
                   </div>
-                )}
-                
-                {/* Other Users Markers */}
-                {visibleUsers.map((user, index) => (
-                  <div
-                    key={user.id}
-                    style={{
-                      position: 'absolute',
-                      left: `${50 + (index * 10)}%`,
-                      top: `${40 + (index * 15)}%`,
-                      transform: 'translate(-50%, -100%)',
-                      zIndex: 5
-                    }}
-                  >
-                    <div className="relative">
-                      <div className={`w-5 h-5 border-2 border-white rounded-full shadow-lg ${
-                        index % 3 === 0 ? 'bg-green-500' : index % 3 === 1 ? 'bg-blue-500' : 'bg-yellow-500'
-                      }`}></div>
-                      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                        {user.name}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </Map>
-            ) : (
-              <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-800 to-gray-900">
-                <div className="text-center">
-                  <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-lg font-bold neon-cyan">Map Unavailable</p>
-                  <p className="text-sm readable-subtitle">Mapbox token not configured</p>
                 </div>
+              )}
+              
+              {/* Other users */}
+              {visibleUsers.slice(0, 4).map((user, index) => (
+                <div
+                  key={user.id}
+                  className="absolute"
+                  style={{
+                    left: `${30 + (index * 20)}%`,
+                    top: `${25 + (index * 15)}%`,
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
+                  <div className="relative">
+                    <div className={`w-5 h-5 border-2 border-white rounded-full shadow-lg ${
+                      index % 3 === 0 ? 'bg-green-500' : index % 3 === 1 ? 'bg-blue-500' : 'bg-yellow-500'
+                    }`}></div>
+                    <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                      {user.name}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              <div className="text-center">
+                <p className="text-lg font-bold neon-cyan">Interactive Map</p>
+                <p className="text-sm readable-subtitle">Real-time location tracking active</p>
+                {ghostMode && (
+                  <p className="text-xs text-purple-400 mt-1">👻 You are in ghost mode</p>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </CardContent>
       </Card>
