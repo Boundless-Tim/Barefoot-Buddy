@@ -20,11 +20,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 import axios from 'axios';
-import Map from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 const Dashboard = ({ setActiveTab }) => {
   const [weather, setWeather] = useState(null);
