@@ -167,44 +167,44 @@ const WelcomeModal = ({ isOpen, onNameSubmit }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="max-w-md mx-auto glass-effect bg-gradient-to-br from-green-500/90 to-cyan-500/90 border-4 neon-border text-white">
-        <DialogHeader className="text-center space-y-6">
+      <DialogContent className="max-w-sm mx-auto glass-effect bg-gradient-to-br from-green-500/90 to-cyan-500/90 border-4 neon-border text-white p-4">
+        <DialogHeader className="text-center space-y-4">
           <div className="relative">
-            <div className="text-7xl animate-bounce">👋</div>
-            <div className="absolute -top-2 -right-2 text-3xl animate-spin">🌟</div>
+            <div className="text-5xl sm:text-6xl animate-bounce">👋</div>
+            <div className="absolute -top-1 -right-1 text-2xl animate-spin">🌟</div>
           </div>
-          <DialogTitle className="text-4xl font-bold festival-font glow-text">
+          <DialogTitle className="text-2xl sm:text-3xl font-bold festival-font glow-text leading-tight">
             What should we call you?
           </DialogTitle>
           <div className="space-y-2">
-            <p className="text-xl text-white/90 font-medium festival-font">
+            <p className="text-lg sm:text-xl text-white/90 font-medium festival-font leading-tight">
               This helps your friends find you on the map! 
             </p>
-            <div className="text-3xl">🗺️</div>
+            <div className="text-2xl">🗺️</div>
           </div>
         </DialogHeader>
         
-        <div className="space-y-6 mt-8">
+        <div className="space-y-4 mt-6">
           <Input
             placeholder="Enter your name (e.g., Sarah, Jake, etc.)"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-            className="text-center text-xl py-8 border-4 border-white/50 focus:border-white bg-white/20 text-white placeholder-white/70 font-bold festival-font rounded-2xl shadow-2xl"
+            className="text-center text-lg sm:text-xl py-4 sm:py-6 border-4 border-white/50 focus:border-white bg-white/20 text-white placeholder-white/70 font-bold festival-font rounded-xl shadow-2xl"
             autoFocus
           />
           
           <Button 
             onClick={handleSubmit}
             disabled={!name.trim()}
-            className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black py-8 text-2xl font-bold festival-font shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-300"
+            className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black py-4 sm:py-6 text-lg sm:text-xl font-bold festival-font shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-300"
           >
-            <span className="text-3xl mr-3">🤠</span>
+            <span className="text-2xl mr-2">🤠</span>
             Let's Go, {name || 'Partner'}! 
-            <span className="text-3xl ml-3">🚀</span>
+            <span className="text-2xl ml-2">🚀</span>
           </Button>
           
-          <p className="text-sm text-center text-white/70 mt-6 font-medium">
+          <p className="text-xs sm:text-sm text-center text-white/70 mt-4 font-medium leading-tight">
             Don't worry - no account creation required! 
             <br />
             Your name is only stored locally on your device. 🔒
