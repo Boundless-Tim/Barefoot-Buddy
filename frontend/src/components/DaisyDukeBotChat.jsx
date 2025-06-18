@@ -43,7 +43,7 @@ const DaisyDukeBotChat = () => {
 
       // Try to load existing chat history
       try {
-        const historyResponse = await axios.get(`${API_BASE_URL}/api/chat/history/${newSessionId}`);
+        const historyResponse = await axios.get(`${API_BASE_URL}/chat/history/${newSessionId}`);
         const history = historyResponse.data.messages || [];
         
         if (history.length === 0) {
