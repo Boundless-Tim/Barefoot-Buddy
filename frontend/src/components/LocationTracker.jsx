@@ -120,7 +120,7 @@ const LocationTracker = () => {
 
   const fetchGroupLocations = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/location/group/default`, {
+      const response = await axios.get(`${API_BASE_URL}/location/group/default`, {
         params: { exclude_user: userId }
       });
       
