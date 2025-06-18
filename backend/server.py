@@ -303,28 +303,32 @@ async def get_drink_round():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.post("/drinks/complete")
-async def complete_drink_round(user_id: str):
-    """Complete a drink round"""
+@api_router.post("/drinks/reset")
+async def reset_drink_rounds():
+    """Reset drink rounds"""
     try:
-        # Update drink round logic here
-        # This is a simplified implementation
-        await db.drink_rounds.update_one(
-            {"active": True},
-            {
-                "$inc": {"currentRound": 1},
-                "$set": {"lastCompleted": user_id},
-                "$push": {
-                    "roundHistory": {
-                        "round": {"$add": ["$currentRound", 1]},
-                        "buyer": user_id,
-                        "timestamp": datetime.utcnow()
-                    }
-                }
-            }
-        )
+        # Reset to default state
+        default_round = {
+            "participants": ["Sarah", "Jake", "Emma", "Mike", "Ashley"],
+            "currentRound": 1,
+            "nextUp": "Sarah",
+            "lastCompleted": None,
+            "barefootPoints": {
+                "Sarah": 0,
+                "Jake": 0,
+                "Emma": 0,
+                "Mike": 0,
+                "Ashley": 0
+            },
+            "roundHistory": [],
+            "active": True
+        }
         
-        return {"status": "success", "message": "Drink round completed"}
+        # Remove all existing rounds and create new default
+        await db.drink_rounds.delete_many({})
+        await db.drink_rounds.insert_one(default_round)
+        
+        return {"status": "success", "message": "Drink rounds reset successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
