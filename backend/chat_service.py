@@ -23,13 +23,11 @@ class DaisyDukeBotService:
         if not self.openai_api_key:
             raise ValueError("OPENAI_API_KEY not found in environment variables")
 
-        # Initialize Perplexity client for web search
-        self.perplexity_key = os.environ.get('PERPLEXITY_API_KEY', '')
-        if self.perplexity_key:
-            self.search_client = OpenAI(
-                api_key=self.perplexity_key, 
-                base_url="https://api.perplexity.ai"
-            )
+        # Initialize LangSearch client for web search
+        self.langsearch_key = os.environ.get('LANGSEARCH_API_KEY', '')
+        if self.langsearch_key:
+            import httpx
+            self.search_client = httpx.AsyncClient()
 
     def _get_current_weather(self, location: str = "Wildwood, NJ") -> Dict:
         """Get current weather data"""
