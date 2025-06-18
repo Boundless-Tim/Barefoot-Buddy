@@ -1,8 +1,9 @@
 import React from 'react';
-import { MapPin, Clock, Beer, MessageCircle, ExternalLink } from 'lucide-react';
+import { Home, MapPin, Clock, Beer, MessageCircle, ExternalLink } from 'lucide-react';
 
 const Navigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
+    { id: 'dashboard', label: 'Home', icon: Home, emoji: '🏠', color: 'from-indigo-500 to-purple-500' },
     { id: 'location', label: 'Location', icon: MapPin, emoji: '🗺️', color: 'from-cyan-500 to-blue-500' },
     { id: 'setlist', label: 'Setlist', icon: Clock, emoji: '🎵', color: 'from-purple-500 to-pink-500' },
     { id: 'drinks', label: 'Drinks', icon: Beer, emoji: '🍻', color: 'from-yellow-500 to-orange-500' },
@@ -17,7 +18,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-yellow-500/10 to-green-500/10 blur-xl"></div>
       
       <div className="relative electric-glass border-t-2 electric-border backdrop-blur-2xl">
-        <div className="flex justify-around items-center py-3 max-w-md mx-auto px-4">
+        <div className="flex justify-around items-center py-2 max-w-md mx-auto px-2">
           {tabs.map((tab) => {
             const IconComponent = tab.icon;
             const isActive = activeTab === tab.id;
@@ -26,7 +27,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 transform ${
+                className={`relative flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-300 transform ${
                   isActive 
                     ? `bg-gradient-to-r ${tab.color} text-white scale-110 shadow-2xl neon-border` 
                     : 'text-gray-300 hover:text-white hover:bg-white/10 hover:scale-105 neon-hover'
@@ -34,14 +35,14 @@ const Navigation = ({ activeTab, setActiveTab }) => {
               >
                 {/* Subtle pulsing background for active tab */}
                 {isActive && (
-                  <div className={`absolute inset-0 bg-gradient-to-r ${tab.color} opacity-30 rounded-2xl blur animate-pulse`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-r ${tab.color} opacity-30 rounded-xl blur animate-pulse`}></div>
                 )}
                 
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="relative mb-1">
-                    <IconComponent className={`h-6 w-6 ${isActive ? 'animate-bounce' : ''} transition-all duration-300`} />
+                    <IconComponent className={`h-5 w-5 ${isActive ? 'animate-bounce' : ''} transition-all duration-300`} />
                     {isActive && (
-                      <div className="absolute -top-1 -right-1 text-lg animate-spin">
+                      <div className="absolute -top-1 -right-1 text-sm animate-spin">
                         {tab.emoji}
                       </div>
                     )}
@@ -59,7 +60,7 @@ const Navigation = ({ activeTab, setActiveTab }) => {
                 </div>
                 
                 {/* Subtle ripple effect on tap */}
-                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 rounded-xl overflow-hidden">
                   <div className={`absolute inset-0 bg-gradient-to-r ${tab.color} opacity-0 hover:opacity-20 transition-opacity duration-300`}></div>
                 </div>
               </button>
