@@ -177,7 +177,7 @@ const LocationTracker = () => {
       setGhostMode(newGhostMode);
       
       // Update backend
-      await axios.post(`${API_BASE_URL}/api/location/ghost-mode/${userId}`, {
+      await axios.post(`${API_BASE_URL}/location/ghost-mode/${userId}`, {
         ghost_mode: newGhostMode
       });
       
