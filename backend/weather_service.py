@@ -1,8 +1,7 @@
 """
-Weather Service for real weather data using OpenWeatherMap free API
+Weather Service for real weather data using Open-Meteo (free, no API key needed)
 """
 import requests
-import os
 from typing import Dict
 import logging
 
@@ -10,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class WeatherService:
     def __init__(self):
-        # Using OpenWeatherMap free API (no key needed for basic calls)
-        self.base_url = "https://api.openweathermap.org/data/2.5/weather"
+        # Using Open-Meteo free API (no key needed)
+        self.base_url = "https://api.open-meteo.com/v1/forecast"
         
         # Wildwood, NJ coordinates
         self.wildwood_lat = 39.0056
