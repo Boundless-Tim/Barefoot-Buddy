@@ -65,10 +65,11 @@ class DaisyDukeBotService:
             }
             await self.db.chat_messages.insert_one(user_msg_data)
 
-            # Create LlmChat instance without predefined system message
+            # Create LlmChat instance with minimal system message (can be overridden by your system)
             chat = LlmChat(
                 api_key=self.openai_api_key,
-                session_id=session_id
+                session_id=session_id,
+                system_message="You are a helpful assistant."
             ).with_model("openai", "gpt-4o")
 
             # Send message and get response
