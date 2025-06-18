@@ -3,6 +3,7 @@ import "./App.css";
 import { Toaster } from "./components/ui/toaster";
 import WelcomeModal from "./components/WelcomeModal";
 import Navigation from "./components/Navigation";
+import Dashboard from "./components/Dashboard";
 import LocationTracker from "./components/LocationTracker";
 import SetlistScheduler from "./components/SetlistScheduler";
 import DrinkRoundTracker from "./components/DrinkRoundTracker";
@@ -11,7 +12,7 @@ import QuickLinks from "./components/QuickLinks";
 
 function App() {
   const [userName, setUserName] = useState(null);
-  const [activeTab, setActiveTab] = useState('location');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [showWelcome, setShowWelcome] = useState(true);
 
   useEffect(() => {
@@ -30,6 +31,8 @@ function App() {
 
   const renderActiveTab = () => {
     switch (activeTab) {
+      case 'dashboard':
+        return <Dashboard setActiveTab={setActiveTab} />;
       case 'location':
         return <LocationTracker />;
       case 'setlist':
@@ -41,7 +44,7 @@ function App() {
       case 'links':
         return <QuickLinks />;
       default:
-        return <LocationTracker />;
+        return <Dashboard setActiveTab={setActiveTab} />;
     }
   };
 
