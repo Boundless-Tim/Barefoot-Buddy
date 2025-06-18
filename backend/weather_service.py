@@ -21,8 +21,25 @@ class WeatherService:
         """Get current weather for Wildwood, NJ"""
         try:
             if not self.api_key or self.api_key == "placeholder_need_to_get_key":
-                # Return mock data if no API key
-                return self._get_mock_weather()
+                # Return mock data if no API key, but make it more dynamic
+                import random
+                temps = [75, 76, 77, 78, 79, 80, 81, 82]
+                descriptions = ['Sunny', 'Partly Cloudy', 'Clear', 'Mostly Sunny']
+                winds = [6, 7, 8, 9, 10, 11, 12]
+                
+                temp = random.choice(temps)
+                desc = random.choice(descriptions)
+                wind = random.choice(winds)
+                
+                return {
+                    'temperature': temp,
+                    'description': desc,
+                    'windSpeed': wind,
+                    'uvIndex': 6,
+                    'icon': 'sun',
+                    'daisyComment': self._get_daisy_comment(temp, desc),
+                    'isLive': False  # Flag to indicate this is mock data
+                }
             
             params = {
                 'lat': self.wildwood_lat,
@@ -45,7 +62,8 @@ class WeatherService:
                 'daisyComment': self._get_daisy_comment(
                     int(data['main']['temp']), 
                     data['weather'][0]['description']
-                )
+                ),
+                'isLive': True  # Flag to indicate this is real data
             }
             
             return weather_data
