@@ -304,20 +304,48 @@ const Dashboard = ({ setActiveTab }) => {
                 interactive={false}
               >
                 {/* Festival grounds marker */}
-                <Marker longitude={-74.8157} latitude={39.0056} anchor="center">
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
                   <div className="w-4 h-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
-                </Marker>
+                </div>
                 
                 {/* Mock user locations around festival */}
-                <Marker longitude={-74.8150} latitude={39.0060} anchor="center">
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '60%',
+                    top: '40%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
                   <div className="w-3 h-3 bg-green-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '0.5s'}}></div>
-                </Marker>
-                <Marker longitude={-74.8165} latitude={39.0052} anchor="center">
+                </div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '40%',
+                    top: '60%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
                   <div className="w-3 h-3 bg-blue-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '1s'}}></div>
-                </Marker>
-                <Marker longitude={-74.8155} latitude={39.0065} anchor="center">
+                </div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '55%',
+                    top: '30%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                >
                   <div className="w-3 h-3 bg-red-500 rounded-full border border-white shadow-md animate-bounce" style={{animationDelay: '1.5s'}}></div>
-                </Marker>
+                </div>
               </Map>
             ) : (
               <div className="electric-gradient h-full flex items-center justify-center">
