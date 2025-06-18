@@ -162,15 +162,18 @@ class LocationService:
         try:
             timestamp = int(time.time() * 1000)
             
-            if ghost_mode:
-                # Remove location when entering ghost mode
-                self.locations_ref.child(user_id).delete()
-            
-            # Update presence
-            self.presence_ref.child(user_id).update({
-                'ghost_mode': ghost_mode,
-                'last_seen': timestamp
-            })
+            try:
+                if ghost_mode:
+                    # Remove location when entering ghost mode
+                    self.locations_ref.child(user_id).delete()
+                
+                # Update presence
+                self.presence_ref.child(user_id).update({
+                    'ghost_mode': ghost_mode,
+                    'last_seen': timestamp
+                })
+            except Exception as firebase_error:
+                logger.error(f"Firebase ghost mode update failed, continuing with MongoDB: {firebase_error}")
 
             # Update MongoDB
             await self.db.user_locations.update_one(
