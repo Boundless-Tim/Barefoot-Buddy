@@ -3,51 +3,206 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Switch } from './ui/switch';
 import { Badge } from './ui/badge';
-import { MapPin, Users, Eye, EyeOff, Zap, Navigation as NavIcon } from 'lucide-react';
-import { mockUsers } from '../data/mock';
+import { MapPin, Users, Eye, EyeOff, Zap, Navigation as NavIcon, Loader2 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const LocationTracker = () => {
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [ghostMode, setGhostMode] = useState(false);
   const [locationPermission, setLocationPermission] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const { toast } = useToast();
+  const userId = localStorage.getItem('userName') || 'User_' + Math.random().toString(36).substr(2, 5);
 
   useEffect(() => {
-    // Check if geolocation is supported
+    initializeLocation();
+    fetchGroupLocations();
+    
+    // Set up interval to update location every 10 seconds
+    const locationInterval = setInterval(() => {
+      if (currentUser && !ghostMode && locationPermission === 'granted') {
+        updateLocation();
+      }
+    }, 10000);
+
+    // Fetch group locations every 5 seconds
+    const groupInterval = setInterval(() => {
+      fetchGroupLocations();
+    }, 5000);
+
+    return () => {
+      clearInterval(locationInterval);
+      clearInterval(groupInterval);
+    };
+  }, [ghostMode]);
+
+  const initializeLocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           setLocationPermission('granted');
-          setCurrentUser({
-            id: 'current',
-            name: localStorage.getItem('userName') || 'You',
+          const userLocation = {
+            id: userId,
+            name: userId,
             lat: position.coords.latitude,
             lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
             isVisible: !ghostMode,
             lastUpdate: new Date().toISOString()
-          });
+          };
+          
+          setCurrentUser(userLocation);
+          
+          // Send initial location to backend
+          if (!ghostMode) {
+            await sendLocationToBackend(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
+          }
+          
+          setLoading(false);
         },
         (error) => {
+          console.error('Geolocation error:', error);
           setLocationPermission('denied');
+          setLoading(false);
           toast({
             title: "Location Access Needed",
             description: "Enable location access to see yourself on the map and share with friends!",
             variant: "destructive"
           });
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      );
+    } else {
+      setLocationPermission('unsupported');
+      setLoading(false);
+      toast({
+        title: "Geolocation Not Supported",
+        description: "Your device doesn't support location tracking.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const sendLocationToBackend = async (latitude, longitude, accuracy = 0) => {
+    try {
+      setUpdating(true);
+      await axios.post(`${API_BASE_URL}/api/location/update/${userId}`, {
+        latitude,
+        longitude,
+        accuracy,
+        ghost_mode: ghostMode
+      });
+      
+      // Update presence
+      await axios.post(`${API_BASE_URL}/api/presence/${userId}`, {
+        online: true
+      });
+      
+    } catch (error) {
+      console.error('Error sending location to backend:', error);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const fetchGroupLocations = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/location/group/default`, {
+        params: { exclude_user: userId }
+      });
+      
+      const locations = response.data.locations || {};
+      const usersArray = Object.entries(locations).map(([id, location]) => ({
+        id,
+        name: id,
+        lat: location.latitude,
+        lng: location.longitude,
+        isVisible: !location.ghost_mode,
+        lastUpdate: new Date(location.timestamp).toISOString(),
+        accuracy: location.accuracy || 0
+      }));
+      
+      setUsers(usersArray);
+    } catch (error) {
+      console.error('Error fetching group locations:', error);
+      // Fallback to empty array
+      setUsers([]);
+    }
+  };
+
+  const updateLocation = () => {
+    if ("geolocation" in navigator && locationPermission === 'granted') {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const updatedUser = {
+            ...currentUser,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            lastUpdate: new Date().toISOString()
+          };
+          setCurrentUser(updatedUser);
+          
+          if (!ghostMode) {
+            await sendLocationToBackend(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
+          }
+        },
+        (error) => {
+          console.error('Error updating location:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 30000
         }
       );
     }
-  }, [ghostMode, toast]);
+  };
 
-  const toggleGhostMode = () => {
-    setGhostMode(!ghostMode);
-    if (currentUser) {
-      setCurrentUser({...currentUser, isVisible: !ghostMode});
+  const toggleGhostMode = async () => {
+    try {
+      const newGhostMode = !ghostMode;
+      setGhostMode(newGhostMode);
+      
+      // Update backend
+      await axios.post(`${API_BASE_URL}/api/location/ghost-mode/${userId}`, {
+        ghost_mode: newGhostMode
+      });
+      
+      if (currentUser) {
+        setCurrentUser({...currentUser, isVisible: !newGhostMode});
+        
+        // If turning off ghost mode, send current location
+        if (!newGhostMode && locationPermission === 'granted') {
+          updateLocation();
+        }
+      }
+      
+      toast({
+        title: newGhostMode ? "Ghost mode activated!" : "You're back on the map!",
+        description: newGhostMode 
+          ? "You're now invisible to other users. Spooky! 👻" 
+          : "Your friends can see you again! 📍",
+        duration: 3000
+      });
+    } catch (error) {
+      console.error('Error toggling ghost mode:', error);
+      toast({
+        title: "Oops! 😅",
+        description: "Couldn't update ghost mode. Try again!",
+        variant: "destructive"
+      });
     }
-    toast({
-      title: ghostMode ? "You're back on the map!" : "Ghost mode activated!", 
+  }; 
       description: ghostMode ? "Your friends can see you again!" : "You're invisible to your crew now"
     });
   };
