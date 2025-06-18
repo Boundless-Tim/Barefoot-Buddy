@@ -54,14 +54,9 @@ const DaisyDukeBotChat = () => {
       
     } catch (error) {
       console.error('Error initializing chat session:', error);
-      // Fallback to local session without backend
+      // Set fallback to local session without backend
       setSessionId('local_session');
-      setMessages([{
-        id: '1',
-        message: "Well honey, I'm havin' a little trouble connectin' to my servers right now, but I'm still here to chat with ya! What's on your mind, sugar?",
-        isBot: true,
-        timestamp: new Date().toISOString()
-      }]);
+      setMessages([]);
     } finally {
       setInitializing(false);
     }
