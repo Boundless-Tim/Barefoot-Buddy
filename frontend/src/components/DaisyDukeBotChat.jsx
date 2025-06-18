@@ -34,7 +34,7 @@ const DaisyDukeBotChat = () => {
       setInitializing(true);
       
       // Create a new chat session
-      const response = await axios.post(`${API_BASE_URL}/api/chat/session`, {
+      const response = await axios.post(`${API_BASE_URL}/chat/session`, {
         user_id: userId
       });
       
