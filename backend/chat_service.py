@@ -139,21 +139,27 @@ class DaisyDukeBotService:
             # The LangSearch API returns data in data.webPages.value structure
             web_pages = result.get("data", {}).get("webPages", {}).get("value", [])
             
+            logger.info(f"LangSearch returned {len(web_pages)} results for query: {query}")
+            
             if web_pages:
                 # Get top 3 results summary
-                for page in web_pages[:3]:
+                for i, page in enumerate(web_pages[:3]):
                     name = page.get('name', 'No title')
                     snippet = page.get('snippet', 'No description')
                     search_summary += f"• **{name}**: {snippet}\n\n"
+                    logger.info(f"Result {i+1}: {name}")
             
             # Also check if there's a summary at the top level
             if result.get("data", {}).get("summary"):
                 search_summary = result["data"]["summary"] + "\n\n" + search_summary
             
-            return {
+            final_result = {
                 "query": query,
                 "result": search_summary if search_summary else "No specific results found, but try checking local directories or calling ahead."
             }
+            
+            logger.info(f"Search function returning: {final_result}")
+            return final_result
             
         except Exception as e:
             logger.error(f"Error in LangSearch web search: {e}")
