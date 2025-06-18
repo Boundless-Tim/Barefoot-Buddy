@@ -30,7 +30,7 @@ const SetlistScheduler = () => {
   const fetchArtists = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/artists`);
+      const response = await axios.get(`${API_BASE_URL}/artists`);
       const artistsData = response.data.artists || [];
       
       setArtists(artistsData);
