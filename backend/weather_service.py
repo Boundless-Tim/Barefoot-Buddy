@@ -19,29 +19,31 @@ class WeatherService:
     async def get_current_weather(self) -> Dict:
         """Get current weather for Wildwood, NJ"""
         try:
-            # Try with free OpenWeatherMap API (no key needed)
+            # Open-Meteo free API parameters
             params = {
-                'lat': self.wildwood_lat,
-                'lon': self.wildwood_lng,
-                'units': 'imperial',  # Fahrenheit
-                'appid': 'demo'  # Demo key that works for testing
+                'latitude': self.wildwood_lat,
+                'longitude': self.wildwood_lng,
+                'current_weather': 'true',
+                'temperature_unit': 'fahrenheit',
+                'windspeed_unit': 'mph'
             }
             
             response = requests.get(self.base_url, params=params, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
+                current = data['current_weather']
                 
                 # Convert to our format
                 weather_data = {
-                    'temperature': int(data['main']['temp']),
-                    'description': data['weather'][0]['description'].title(),
-                    'windSpeed': int(data['wind'].get('speed', 0)),
+                    'temperature': int(current['temperature']),
+                    'description': self._get_description(current['weathercode']),
+                    'windSpeed': int(current['windspeed']),
                     'uvIndex': 6,  # Static for now
-                    'icon': self._get_icon_type(data['weather'][0]['icon']),
+                    'icon': self._get_icon_type(current['weathercode']),
                     'daisyComment': self._get_daisy_comment(
-                        int(data['main']['temp']), 
-                        data['weather'][0]['description']
+                        int(current['temperature']), 
+                        self._get_description(current['weathercode'])
                     ),
                     'isLive': True
                 }
@@ -56,11 +58,32 @@ class WeatherService:
             logger.error(f"Error fetching weather: {e}")
             return self._get_mock_weather()
 
-    def _get_icon_type(self, openweather_icon: str) -> str:
-        """Convert OpenWeather icon to our icon type"""
-        if openweather_icon.startswith('01'):  # clear sky
+    def _get_description(self, weather_code: int) -> str:
+        """Convert weather code to description"""
+        descriptions = {
+            0: 'Clear Sky',
+            1: 'Mainly Clear', 
+            2: 'Partly Cloudy',
+            3: 'Overcast',
+            45: 'Fog',
+            48: 'Depositing Rime Fog',
+            51: 'Light Drizzle',
+            53: 'Moderate Drizzle',
+            55: 'Dense Drizzle',
+            61: 'Slight Rain',
+            63: 'Moderate Rain',
+            65: 'Heavy Rain',
+            80: 'Slight Rain Showers',
+            81: 'Moderate Rain Showers',
+            82: 'Violent Rain Showers'
+        }
+        return descriptions.get(weather_code, 'Clear')
+
+    def _get_icon_type(self, weather_code: int) -> str:
+        """Convert weather code to our icon type"""
+        if weather_code in [0, 1]:  # clear/mainly clear
             return 'sun'
-        elif openweather_icon.startswith(('02', '03', '04')):  # clouds
+        elif weather_code in [2, 3]:  # cloudy
             return 'cloud'
         else:
             return 'sun'  # default
