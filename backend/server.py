@@ -191,6 +191,25 @@ async def get_group_locations(group_id: str = "default", exclude_user: Optional[
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/location/stats/{group_id}")
+async def get_group_stats(group_id: str = "default"):
+    """Get group statistics including both visible and ghost users"""
+    try:
+        # Get all user locations from MongoDB (includes ghost users)
+        all_locations = await db.user_locations.find({}).to_list(100)
+        
+        total_users = len(all_locations)
+        visible_users = len([loc for loc in all_locations if not loc.get("ghost_mode", False)])
+        ghost_users = len([loc for loc in all_locations if loc.get("ghost_mode", False)])
+        
+        return {
+            "total": total_users,
+            "visible": visible_users, 
+            "ghost": ghost_users
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/location/ghost-mode/{user_id}")
 async def toggle_ghost_mode(user_id: str, ghost_update: GhostModeUpdate):
     """Toggle ghost mode for user"""
