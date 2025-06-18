@@ -305,15 +305,20 @@ const LocationTracker = () => {
               <div className="flex items-center justify-between pt-4 border-t border-gray-600">
                 <div className="flex items-center gap-3">
                   {ghostMode ? <EyeOff className="h-5 w-5 text-purple-400" /> : <Eye className="h-5 w-5 text-green-400" />}
-                  <span className="readable-text">
+                  <span className="readable-text font-medium">
                     {ghostMode ? 'You are invisible to friends' : 'Friends can see your location'}
                   </span>
                 </div>
-                <Switch
-                  checked={ghostMode}
-                  onCheckedChange={toggleGhostMode}
-                  className="data-[state=checked]:bg-purple-500"
-                />
+                <div className="flex items-center gap-3">
+                  <span className="text-sm readable-subtitle">
+                    {ghostMode ? 'Ghost Mode' : 'Visible'}
+                  </span>
+                  <Switch
+                    checked={ghostMode}
+                    onCheckedChange={toggleGhostMode}
+                    className="data-[state=checked]:bg-purple-500 scale-125"
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
