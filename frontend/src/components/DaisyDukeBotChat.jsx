@@ -29,44 +29,44 @@ const DaisyDukeBotChat = () => {
     
     // Festival info responses
     if (message.includes('bag') || message.includes('policy')) {
-      return `Well sugar, ${festivalInfo.bagPolicy} Hope that helps, darlin'! 💋`;
+      return `Well sugar, ${festivalInfo.bagPolicy} Hope that helps, darlin'!`;
     }
     if (message.includes('food') || message.includes('eat')) {
-      return `Honey child, ${festivalInfo.food} My stomach's already grumblin' just thinkin' about it! 🤤`;
+      return `Honey child, ${festivalInfo.food} My stomach's already grumblin' just thinkin' about it!`;
     }
     if (message.includes('parking') || message.includes('car')) {
-      return `Don't you worry bout that, sweetie! ${festivalInfo.parking} Easy as pie! 🥧`;
+      return `Don't you worry bout that, sweetie! ${festivalInfo.parking} Easy as pie!`;
     }
     if (message.includes('weather') || message.includes('hot') || message.includes('rain')) {
-      return `${festivalInfo.weather} Perfect for dancin' barefoot in the sand, sugar! 💃🏖️`;
+      return `${festivalInfo.weather} Perfect for dancin' barefoot in the sand, sugar!`;
     }
     if (message.includes('schedule') || message.includes('time') || message.includes('when')) {
-      return `${festivalInfo.schedule} Y'all gonna have the time of your lives! 🎉`;
+      return `${festivalInfo.schedule} Y'all gonna have the time of your lives!`;
     }
     
     // General responses
     if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-      return "Well hey there, sugar! 🤠 Daisy here, ready to help you have the best dang festival experience! What can this Southern belle do for ya? 💋🎶";
+      return "Well hey there, sugar! Daisy here, ready to help you have the best dang festival experience! What can this Southern belle do for ya?";
     }
     if (message.includes('thanks') || message.includes('thank you')) {
-      return "Aw shucks, you're sweeter than sweet tea! 🧡 Anything for my festival family! Y'all have fun now, ya hear? 🤗";
+      return "Aw shucks, you're sweeter than sweet tea! Anything for my festival family! Y'all have fun now, ya hear?";
     }
     if (message.includes('drink') || message.includes('beer') || message.includes('cocktail')) {
-      return "Honey, we got ice-cold beers, fruity cocktails, and everything in between! 🍻🍹 Stay hydrated in this beach heat, and don't forget to pace yourself, darlin'! 💦";
+      return "Honey, we got ice-cold beers, fruity cocktails, and everything in between! Stay hydrated in this beach heat, and don't forget to pace yourself, darlin'!";
     }
     if (message.includes('bathroom') || message.includes('restroom')) {
-      return "Sugar, there are clean restrooms scattered all around the festival grounds! 🚻 Look for the big blue signs - can't miss 'em! They're air-conditioned too! 🌬️";
+      return "Sugar, there are clean restrooms scattered all around the festival grounds! Look for the big blue signs - can't miss 'em! They're air-conditioned too!";
     }
     if (message.includes('lost') || message.includes('find')) {
-      return "Don't you fret none, honey! 🧭 Head to any of the bright yellow info tents, or just holler for security in those neon vests! We'll get you sorted quicker than a hiccup! 👮‍♀️✨";
+      return "Don't you fret none, honey! Head to any of the bright yellow info tents, or just holler for security in those neon vests! We'll get you sorted quicker than a hiccup!";
     }
     
     // Default responses
     const defaultResponses = [
-      "Well butter my biscuit, that's a good question! 🤠 Let me think on that for ya, sugar! 🤔💭",
-      "Honey child, you got me there! 😅 Why don't you check with the folks at the info tent? They know everything! 🎪📋",
-      "Sweet pea, I wish I knew more about that! 💕 But don't you worry - ask around, everyone here's friendly as can be! 🤝🌟",
-      "Darlin', that's outside my wheelhouse! 🤷‍♀️ But I bet someone at the main stage can help ya out! 🎤🎵"
+      "Well butter my biscuit, that's a good question! Let me think on that for ya, sugar!",
+      "Honey child, you got me there! Why don't you check with the folks at the info tent? They know everything!",
+      "Sweet pea, I wish I knew more about that! But don't you worry - ask around, everyone here's friendly as can be!",
+      "Darlin', that's outside my wheelhouse! But I bet someone at the main stage can help ya out!"
     ];
     
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
@@ -104,24 +104,24 @@ const DaisyDukeBotChat = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-pink-600 flex items-center justify-center gap-2">
+        <h2 className="text-3xl font-bold festival-font neon-pink flex items-center justify-center gap-2">
           <MessageCircle className="h-8 w-8" />
-          Daisy DukeBot 🤖💋
+          <span>Daisy DukeBot</span>
         </h2>
-        <p className="text-gray-600">Your sassy Southern festival guide! 🤠</p>
+        <p className="text-lg readable-text">Your sassy Southern festival guide!</p>
       </div>
 
       {/* Chat Interface */}
-      <Card className="h-96 flex flex-col">
-        <CardHeader className="bg-gradient-to-r from-pink-50 to-rose-50 border-b">
+      <Card className="electric-glass border-2 border-pink-400 h-96 flex flex-col">
+        <CardHeader className="electric-gradient border-b border-pink-300 pb-4">
           <CardTitle className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-400 rounded-full flex items-center justify-center">
               <Bot className="h-6 w-6 text-white" />
             </div>
             <div>
-              <p className="text-pink-800">Daisy DukeBot</p>
-              <p className="text-sm text-pink-600 font-normal">
-                {isTyping ? 'Typing... 💭' : 'Online and ready to help! 🌟'}
+              <p className="text-lg font-bold neon-pink">Daisy DukeBot</p>
+              <p className="text-sm readable-subtitle font-normal">
+                {isTyping ? 'Typing...' : 'Online and ready to help!'}
               </p>
             </div>
           </CardTitle>
@@ -139,7 +139,7 @@ const DaisyDukeBotChat = () => {
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                       message.isBot 
                         ? 'bg-gradient-to-br from-pink-400 to-rose-400' 
-                        : 'bg-gradient-to-br from-blue-400 to-purple-400'
+                        : 'bg-gradient-to-br from-cyan-400 to-blue-400'
                     }`}>
                       {message.isBot ? (
                         <Bot className="h-4 w-4 text-white" />
@@ -147,15 +147,13 @@ const DaisyDukeBotChat = () => {
                         <User className="h-4 w-4 text-white" />
                       )}
                     </div>
-                    <div className={`px-4 py-2 rounded-lg ${
+                    <div className={`px-4 py-3 rounded-lg shadow-md ${
                       message.isBot 
-                        ? 'bg-gradient-to-r from-pink-100 to-rose-100 text-pink-900 border border-pink-200' 
-                        : 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
+                        ? 'electric-glass bg-pink-900/20 border border-pink-300 text-white' 
+                        : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white'
                     }`}>
-                      <p className="text-sm leading-relaxed">{message.message}</p>
-                      <p className={`text-xs mt-1 ${
-                        message.isBot ? 'text-pink-600' : 'text-blue-100'
-                      }`}>
+                      <p className="text-sm leading-relaxed font-medium">{message.message}</p>
+                      <p className={`text-xs mt-2 opacity-70`}>
                         {new Date(message.timestamp).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit'
@@ -172,7 +170,7 @@ const DaisyDukeBotChat = () => {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center">
                       <Bot className="h-4 w-4 text-white" />
                     </div>
-                    <div className="bg-gradient-to-r from-pink-100 to-rose-100 border border-pink-200 px-4 py-2 rounded-lg">
+                    <div className="electric-glass bg-pink-900/20 border border-pink-300 px-4 py-3 rounded-lg">
                       <div className="flex space-x-1">
                         <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
                         <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
@@ -186,20 +184,20 @@ const DaisyDukeBotChat = () => {
           </ScrollArea>
           
           {/* Input Area */}
-          <div className="border-t p-4 bg-gray-50">
+          <div className="border-t border-pink-300 p-4 electric-gradient">
             <div className="flex gap-2">
               <Input
-                placeholder="Ask Daisy anything about the festival... 🤠"
+                placeholder="Ask Daisy anything about the festival..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                className="flex-1"
+                className="flex-1 bg-white/10 border-pink-300 text-white placeholder-gray-300"
                 disabled={isTyping}
               />
               <Button 
                 onClick={sendMessage}
                 disabled={!inputMessage.trim() || isTyping}
-                className="bg-pink-600 hover:bg-pink-700"
+                className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white px-4"
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -214,9 +212,9 @@ const DaisyDukeBotChat = () => {
                   size="sm"
                   onClick={() => setInputMessage(question)}
                   disabled={isTyping}
-                  className="text-xs border-pink-200 text-pink-600 hover:bg-pink-50"
+                  className="text-xs border-pink-300 text-pink-300 hover:bg-pink-500/20 hover:text-white"
                 >
-                  {question} 💭
+                  {question}
                 </Button>
               ))}
             </div>
