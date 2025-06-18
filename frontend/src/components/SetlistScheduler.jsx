@@ -67,7 +67,7 @@ const SetlistScheduler = () => {
       ));
 
       // Send to API
-      await axios.post(`${API_BASE_URL}/api/artists/${artistId}/star`);
+      await axios.post(`${API_BASE_URL}/artists/${artistId}/star`);
       
     } catch (error) {
       console.error('Error toggling star:', error);
