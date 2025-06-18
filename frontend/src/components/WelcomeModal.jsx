@@ -118,33 +118,33 @@ const WelcomeModal = ({ isOpen, onNameSubmit }) => {
   if (step === 1) {
     return (
       <Dialog open={isOpen} onOpenChange={() => {}}>
-        <DialogContent className="max-w-lg mx-auto glass-effect bg-gradient-to-br from-purple-500/90 to-pink-500/90 border-4 neon-border text-white">
+        <DialogContent className="max-w-sm mx-auto glass-effect bg-gradient-to-br from-purple-500/90 to-pink-500/90 border-4 neon-border text-white p-4 max-h-[90vh] overflow-y-auto">
           <DialogHeader className="text-center">
-            <div className="text-6xl mb-4">✨</div>
-            <DialogTitle className="text-4xl font-bold festival-font glow-text">
+            <div className="text-4xl sm:text-5xl mb-3">✨</div>
+            <DialogTitle className="text-2xl sm:text-3xl font-bold festival-font glow-text">
               Amazing Features Await!
             </DialogTitle>
           </DialogHeader>
           
-          <div className="grid grid-cols-1 gap-6 mt-8">
+          <div className="grid grid-cols-1 gap-4 mt-6">
             {features.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
                 <div 
                   key={index}
-                  className="glass-effect bg-white/20 backdrop-blur-lg rounded-2xl p-4 border-2 border-white/30 transform hover:scale-105 transition-all duration-300 bounce-entrance"
+                  className="glass-effect bg-white/20 backdrop-blur-lg rounded-xl p-3 border-2 border-white/30 transform hover:scale-105 transition-all duration-300 bounce-entrance"
                   style={{animationDelay: `${index * 0.2}s`}}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.color} flex items-center justify-center shadow-2xl relative`}>
-                      <IconComponent className="h-8 w-8 text-white" />
-                      <div className="absolute -top-2 -right-2 text-2xl animate-bounce">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center shadow-2xl relative`}>
+                      <IconComponent className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                      <div className="absolute -top-1 -right-1 text-lg animate-bounce">
                         {feature.emoji}
                       </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold festival-font text-white mb-1">{feature.title}</h3>
-                      <p className="text-sm text-white/80 font-medium">{feature.description}</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg sm:text-xl font-bold festival-font text-white mb-1 leading-tight">{feature.title}</h3>
+                      <p className="text-sm text-white/80 font-medium leading-tight">{feature.description}</p>
                     </div>
                   </div>
                 </div>
@@ -154,11 +154,11 @@ const WelcomeModal = ({ isOpen, onNameSubmit }) => {
           
           <Button 
             onClick={() => setStep(2)}
-            className="w-full mt-8 bg-gradient-to-r from-green-400 to-cyan-400 hover:from-green-500 hover:to-cyan-500 text-black py-6 text-xl font-bold festival-font shadow-2xl transform hover:scale-105 transition-all duration-300"
+            className="w-full mt-6 bg-gradient-to-r from-green-400 to-cyan-400 hover:from-green-500 hover:to-cyan-500 text-black py-4 sm:py-5 text-lg sm:text-xl font-bold festival-font shadow-2xl transform hover:scale-105 transition-all duration-300"
           >
-            <Star className="h-6 w-6 mr-2" />
+            <Star className="h-5 w-5 mr-2" />
             That's Awesome! What's Next? 
-            <span className="text-2xl ml-2">🎉</span>
+            <span className="text-xl ml-2">🎉</span>
           </Button>
         </DialogContent>
       </Dialog>
