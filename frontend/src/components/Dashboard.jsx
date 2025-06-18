@@ -66,11 +66,20 @@ const Dashboard = ({ setActiveTab }) => {
       const groupResponse = await axios.get(`${API_BASE_URL}/location/group/default`);
       console.log('Group response:', groupResponse.data);
       const locations = groupResponse.data.locations || {};
+      console.log('Individual locations:', locations);
       
       // Process group data
       const totalUsers = Object.keys(locations).length;
-      const visibleUsers = Object.values(locations).filter(loc => !loc.ghost_mode).length;
-      const ghostUsers = Object.values(locations).filter(loc => loc.ghost_mode).length;
+      const visibleUsers = Object.values(locations).filter(loc => {
+        console.log('User location data:', loc);
+        return !loc.ghost_mode;
+      }).length;
+      const ghostUsers = Object.values(locations).filter(loc => {
+        console.log('Checking ghost mode for:', loc, 'ghost_mode value:', loc.ghost_mode);
+        return loc.ghost_mode === true;
+      }).length;
+      
+      console.log('Counts - Total:', totalUsers, 'Visible:', visibleUsers, 'Ghost:', ghostUsers);
       
       setGroupData({
         total: totalUsers,
