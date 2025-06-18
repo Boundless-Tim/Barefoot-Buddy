@@ -224,7 +224,8 @@ const LocationTracker = () => {
       toast({
         title: "Oops! 😅",
         description: "Couldn't update ghost mode. Try again!",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 2000
       });
     }
   };
