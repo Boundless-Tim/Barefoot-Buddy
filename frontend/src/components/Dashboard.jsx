@@ -44,19 +44,19 @@ const Dashboard = ({ setActiveTab }) => {
       
       // Fetch weather data
       console.log('Fetching weather...');
-      const weatherResponse = await axios.get(`${API_BASE_URL}/api/weather`);
+      const weatherResponse = await axios.get(`${API_BASE_URL}/weather`);
       console.log('Weather response:', weatherResponse.data);
       setWeather(weatherResponse.data);
 
       // Fetch artists data
       console.log('Fetching artists...');
-      const artistsResponse = await axios.get(`${API_BASE_URL}/api/artists`);
+      const artistsResponse = await axios.get(`${API_BASE_URL}/artists`);
       console.log('Artists response:', artistsResponse.data);
       setArtists(artistsResponse.data.artists || []);
 
       // Fetch drink round data
       console.log('Fetching drink round...');
-      const drinkResponse = await axios.get(`${API_BASE_URL}/api/drinks/round`);
+      const drinkResponse = await axios.get(`${API_BASE_URL}/drinks/round`);
       console.log('Drink round response:', drinkResponse.data);
       setDrinkRound(drinkResponse.data);
 
