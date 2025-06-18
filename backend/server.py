@@ -363,11 +363,10 @@ async def startup_event():
     """Initialize database with festival data if needed"""
     logger.info("Starting Barefoot Buddy API...")
     
-    # Check if artists collection is empty and populate with mock data
-    artist_count = await db.artists.count_documents({})
-    if artist_count == 0:
-        logger.info("Populating database with festival artists...")
-        await populate_artists_data()
+    # Clear existing artists and repopulate with full data
+    await db.artists.delete_many({})
+    logger.info("Cleared existing artists data")
+    await populate_artists_data()
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
