@@ -341,14 +341,16 @@ const LocationTracker = () => {
                 style={{ width: '100%', height: '100%' }}
                 mapStyle="mapbox://styles/mapbox/dark-v11"
               >
-                <NavigationControl position="top-right" />
-                
                 {/* Current User Marker */}
                 {currentUser && !ghostMode && (
-                  <Marker
-                    longitude={currentUser.lng}
-                    latitude={currentUser.lat}
-                    anchor="bottom"
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%, -100%)',
+                      zIndex: 10
+                    }}
                   >
                     <div className="relative">
                       <div className="w-6 h-6 bg-red-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
@@ -357,16 +359,20 @@ const LocationTracker = () => {
                         You
                       </div>
                     </div>
-                  </Marker>
+                  </div>
                 )}
                 
                 {/* Other Users Markers */}
                 {visibleUsers.map((user, index) => (
-                  <Marker
+                  <div
                     key={user.id}
-                    longitude={user.lng}
-                    latitude={user.lat}
-                    anchor="bottom"
+                    style={{
+                      position: 'absolute',
+                      left: `${50 + (index * 10)}%`,
+                      top: `${40 + (index * 15)}%`,
+                      transform: 'translate(-50%, -100%)',
+                      zIndex: 5
+                    }}
                   >
                     <div className="relative">
                       <div className={`w-5 h-5 border-2 border-white rounded-full shadow-lg ${
@@ -376,7 +382,7 @@ const LocationTracker = () => {
                         {user.name}
                       </div>
                     </div>
-                  </Marker>
+                  </div>
                 ))}
               </Map>
             ) : (
