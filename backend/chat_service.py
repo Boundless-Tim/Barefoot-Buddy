@@ -156,7 +156,7 @@ class DaisyDukeBotService:
         ]
 
     async def send_message(self, session_id: str, user_message: str, user_id: str) -> Dict:
-        """Send a message to Daisy DukeBot and get response"""
+        """Send a message to Daisy DukeBot and get response with function calling"""
         try:
             # Store user message in database
             user_msg_data = {
@@ -168,16 +168,123 @@ class DaisyDukeBotService:
             }
             await self.db.chat_messages.insert_one(user_msg_data)
 
-            # Create LlmChat instance with minimal system message (can be overridden by your system)
-            chat = LlmChat(
-                api_key=self.openai_api_key,
-                session_id=session_id,
-                system_message="You are a helpful assistant."
-            ).with_model("openai", "gpt-4o")
+            # Define available functions for OpenAI
+            tools = [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "get_current_weather",
+                        "description": "Get current weather information for the festival location",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "location": {
+                                    "type": "string",
+                                    "description": "Location to get weather for (defaults to Wildwood, NJ)"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "function", 
+                    "function": {
+                        "name": "get_group_locations",
+                        "description": "Get information about group members' locations and status",
+                        "parameters": {"type": "object", "properties": {}}
+                    }
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "search_web",
+                        "description": "Search the web for current information about local businesses, restaurants, events, or attractions near the festival",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "query": {
+                                    "type": "string",
+                                    "description": "Search query for local information"
+                                }
+                            },
+                            "required": ["query"]
+                        }
+                    }
+                }
+            ]
 
-            # Send message and get response
-            message = UserMessage(text=user_message)
-            bot_response = await chat.send_message(message)
+            # Create OpenAI client for function calling
+            openai_client = OpenAI(api_key=self.openai_api_key)
+            
+            # Get recent chat history for context
+            recent_messages = await self.db.chat_messages.find(
+                {"session_id": session_id}
+            ).sort("timestamp", -1).limit(10).to_list(10)
+            
+            # Build conversation history
+            conversation = [
+                {
+                    "role": "system",
+                    "content": "You are Daisy DukeBot, a helpful festival assistant for Barefoot Country Music Festival in Wildwood, NJ. You can access current weather, group location data, and search for local information to help festival-goers."
+                }
+            ]
+            
+            # Add recent conversation history (reverse to get chronological order)
+            for msg in reversed(recent_messages[1:]):  # Skip the current message
+                role = "assistant" if msg["is_bot"] else "user"
+                conversation.append({"role": role, "content": msg["content"]})
+            
+            # Add current user message
+            conversation.append({"role": "user", "content": user_message})
+
+            # Make request with function calling
+            response = openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=conversation,
+                tools=tools,
+                tool_choice="auto"
+            )
+
+            # Handle function calls
+            message = response.choices[0].message
+            
+            if message.tool_calls:
+                # Execute function calls
+                for tool_call in message.tool_calls:
+                    function_name = tool_call.function.name
+                    arguments = json.loads(tool_call.function.arguments)
+                    
+                    if function_name == "get_current_weather":
+                        function_result = self._get_current_weather(
+                            arguments.get("location", "Wildwood, NJ")
+                        )
+                    elif function_name == "get_group_locations":
+                        function_result = self._get_group_locations()
+                    elif function_name == "search_web":
+                        function_result = self._search_web(arguments["query"])
+                    else:
+                        function_result = {"error": "Unknown function"}
+                    
+                    # Add function result to conversation
+                    conversation.append({
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [tool_call]
+                    })
+                    conversation.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": json.dumps(function_result)
+                    })
+                
+                # Get final response with function results
+                final_response = openai_client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=conversation
+                )
+                bot_response = final_response.choices[0].message.content
+            else:
+                bot_response = message.content
 
             # Store bot response in database
             bot_msg_data = {
@@ -207,7 +314,7 @@ class DaisyDukeBotService:
 
         except Exception as e:
             logger.error(f"Error in chat service: {e}")
-            fallback_response = "Well bless your heart, I'm havin' a little technical trouble right now, sugar! Give me just a moment and try again, would ya?"
+            fallback_response = "I'm having some technical trouble right now. Please try again in a moment!"
             
             # Store fallback response
             bot_msg_data = {
