@@ -34,15 +34,38 @@ class DaisyDukeBotService:
         try:
             openai_client = OpenAI(api_key=self.openai_api_key)
             
-            response = openai_client.responses.create(
-                prompt={
-                    "id": "pmpt_685238ede11881938cf93dbedcd19afa0c4dc65de6a4cfda",
-                    "version": "3"
-                }
-            )
+            # Try the prompt response API
+            try:
+                response = openai_client.responses.create(
+                    prompt={
+                        "id": "pmpt_685238ede11881938cf93dbedcd19afa0c4dc65de6a4cfda",
+                        "version": "3"
+                    },
+                    input="Get current weather information for Wildwood, NJ festival",
+                    model="gpt-4o"
+                )
+                
+                weather_response = response.text if hasattr(response, 'text') else str(response)
+            except Exception as prompt_error:
+                logger.warning(f"Prompt API failed, trying completions API: {prompt_error}")
+                # Fallback to regular completions API with weather prompt
+                response = openai_client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are Daisy DukeBot providing weather information for Barefoot Country Music Festival in Wildwood, NJ. Use a friendly Southern style and provide current weather details."
+                        },
+                        {
+                            "role": "user",
+                            "content": "What's the current weather like at the festival location?"
+                        }
+                    ]
+                )
+                weather_response = response.choices[0].message.content
             
             return {
-                "weather_response": response.text if hasattr(response, 'text') else str(response),
+                "weather_response": weather_response,
                 "source": "openai_prompt"
             }
         except Exception as e:
