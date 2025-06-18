@@ -198,6 +198,9 @@ frontend:
       - working: false
         agent: "main"
         comment: "Frontend still using mock data. Need to update all components to use real backend APIs: Dashboard weather, Daisy chat, location tracking, artist data."
+      - working: false
+        agent: "testing"
+        comment: "Code analysis confirms frontend components are not properly integrated with backend APIs. Dashboard attempts to fetch weather data but falls back to mock data. DaisyDukeBotChat tries to connect to backend but has fallback logic. DrinkRoundTracker still uses mockDrinkRound data. SetlistScheduler attempts to fetch artists but may be failing."
 
   - task: "Firebase Frontend Integration"
     implemented: false
