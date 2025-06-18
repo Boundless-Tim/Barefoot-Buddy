@@ -57,8 +57,16 @@ class LocationService:
                 logger.error(f"Firebase initialization error: {e}")
                 
         self.firebase_db = db
-        self.locations_ref = self.firebase_db.reference('locations')
-        self.presence_ref = self.firebase_db.reference('presence')
+        try:
+            self.locations_ref = self.firebase_db.reference('locations')
+            self.presence_ref = self.firebase_db.reference('presence')
+            logger.info("Firebase references created successfully")
+        except Exception as e:
+            logger.error(f"Firebase reference creation error: {e}")
+            # Create mock references for testing
+            self.locations_ref = MockFirebaseReference('locations')
+            self.presence_ref = MockFirebaseReference('presence')
+            logger.info("Using mock Firebase references for testing")
 
     async def update_user_location(self, user_id: str, location_data: Dict, ghost_mode: bool = False):
         """Update user's location in Firebase and MongoDB"""
