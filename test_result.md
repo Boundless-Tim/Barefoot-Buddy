@@ -213,6 +213,9 @@ frontend:
       - working: false
         agent: "main"
         comment: "Frontend Firebase integration not yet implemented. Need to add Firebase SDK and real-time location tracking components."
+      - working: false
+        agent: "testing"
+        comment: "LocationTracker component is still using mockUsers data from mock.js instead of integrating with Firebase. The component shows a placeholder map interface instead of a real map."
 
   - task: "Mapbox Integration"
     implemented: false
