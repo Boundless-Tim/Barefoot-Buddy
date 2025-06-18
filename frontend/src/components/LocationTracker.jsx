@@ -6,11 +6,8 @@ import { Badge } from './ui/badge';
 import { MapPin, Users, Eye, EyeOff, Zap, Navigation as NavIcon, Loader2, RefreshCcw } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import axios from 'axios';
-import Map from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 const LocationTracker = () => {
   const [users, setUsers] = useState([]);
