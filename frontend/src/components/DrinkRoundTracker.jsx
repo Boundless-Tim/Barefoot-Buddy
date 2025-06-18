@@ -112,17 +112,26 @@ const DrinkRoundTracker = () => {
     }
   };
 
-  const resetRounds = () => {
-    setDrinkData(prev => ({
-      ...prev,
-      currentRound: 1,
-      nextUp: prev.participants[0],
-      roundHistory: []
-    }));
-    toast({
-      title: "Rounds Reset! 🔄",
-      description: "Starting fresh! Let the good times roll again! 🎉",
-    });
+  const resetRounds = async () => {
+    try {
+      // Reset backend data
+      await axios.post(`${API_BASE_URL}/api/drinks/reset`);
+      
+      // Refresh data from backend
+      await fetchDrinkRoundData();
+      
+      toast({
+        title: "Rounds Reset! 🔄",
+        description: "Starting fresh! Let the good times roll again! 🎉",
+      });
+    } catch (error) {
+      console.error('Error resetting rounds:', error);
+      toast({
+        title: "Oops! 😅", 
+        description: "Couldn't reset rounds. Try again!",
+        variant: "destructive"
+      });
+    }
   };
 
   const getTopPlayer = () => {
