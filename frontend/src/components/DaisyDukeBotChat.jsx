@@ -103,7 +103,7 @@ const DaisyDukeBotChat = () => {
       if (sessionId && sessionId !== 'local_session') {
         // Send message to real API
         const response = await axios.post(
-          `${API_BASE_URL}/api/chat/${sessionId}?user_id=${userId}`,
+          `${API_BASE_URL}/chat/${sessionId}?user_id=${userId}`,
           { message: currentMessage }
         );
 
