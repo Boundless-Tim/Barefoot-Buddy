@@ -61,31 +61,12 @@ const Dashboard = ({ setActiveTab }) => {
       console.log('Drink round response:', drinkResponse.data);
       setDrinkRound(drinkResponse.data);
 
-      // Fetch group location data
-      console.log('Fetching group locations...');
-      const groupResponse = await axios.get(`${API_BASE_URL}/location/group/default`);
-      console.log('Group response:', groupResponse.data);
-      const locations = groupResponse.data.locations || {};
-      console.log('Individual locations:', locations);
+      // Fetch group location stats
+      console.log('Fetching group stats...');
+      const statsResponse = await axios.get(`${API_BASE_URL}/location/stats/default`);
+      console.log('Stats response:', statsResponse.data);
       
-      // Process group data
-      const totalUsers = Object.keys(locations).length;
-      const visibleUsers = Object.values(locations).filter(loc => {
-        console.log('User location data:', loc);
-        return !loc.ghost_mode;
-      }).length;
-      const ghostUsers = Object.values(locations).filter(loc => {
-        console.log('Checking ghost mode for:', loc, 'ghost_mode value:', loc.ghost_mode);
-        return loc.ghost_mode === true;
-      }).length;
-      
-      console.log('Counts - Total:', totalUsers, 'Visible:', visibleUsers, 'Ghost:', ghostUsers);
-      
-      setGroupData({
-        total: totalUsers,
-        visible: visibleUsers,
-        ghost: ghostUsers
-      });
+      setGroupData(statsResponse.data);
 
       setLoading(false);
     } catch (error) {
