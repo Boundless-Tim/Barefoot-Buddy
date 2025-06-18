@@ -135,13 +135,20 @@ class DaisyDukeBotService:
             
             # Extract relevant information
             search_summary = ""
-            if result.get("web_pages"):
-                # Get top 3 results summary
-                for page in result["web_pages"][:3]:
-                    search_summary += f"• {page.get('title', 'No title')}: {page.get('snippet', 'No description')}\n"
             
-            if result.get("summary"):
-                search_summary = result["summary"] + "\n\n" + search_summary
+            # The LangSearch API returns data in data.webPages.value structure
+            web_pages = result.get("data", {}).get("webPages", {}).get("value", [])
+            
+            if web_pages:
+                # Get top 3 results summary
+                for page in web_pages[:3]:
+                    name = page.get('name', 'No title')
+                    snippet = page.get('snippet', 'No description')
+                    search_summary += f"• **{name}**: {snippet}\n\n"
+            
+            # Also check if there's a summary at the top level
+            if result.get("data", {}).get("summary"):
+                search_summary = result["data"]["summary"] + "\n\n" + search_summary
             
             return {
                 "query": query,
