@@ -202,9 +202,7 @@ const LocationTracker = () => {
         variant: "destructive"
       });
     }
-  }; 
-      description: ghostMode ? "Your friends can see you again!" : "You're invisible to your crew now"
-    });
+  };
   };
 
   const visibleUsers = users.filter(user => user.isVisible);
