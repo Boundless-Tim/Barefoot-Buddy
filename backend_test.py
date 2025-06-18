@@ -583,6 +583,275 @@ class BarefootBuddyTester:
                     logger.info(f"- {test['name']}: {test.get('details', {}).get('error', 'Unknown error')}")
             logger.info("=" * 50)
 
+def test_smart_daisy_functionality():
+    """Test the updated Smart Daisy functionality"""
+    tester = BarefootBuddyTester()
+    
+    # Create a chat session first
+    tester.test_chat_session_creation()
+    
+    if not tester.chat_session_id:
+        logger.error("Failed to create chat session, cannot test Smart Daisy functionality")
+        return False
+    
+    # Test 1: Weather Query Testing
+    logger.info("\n=== TESTING SMART DAISY WEATHER FUNCTIONALITY ===")
+    weather_queries = [
+        "What's the weather like?",
+        "How's the temperature at the festival?"
+    ]
+    
+    weather_results = []
+    for query in weather_queries:
+        try:
+            logger.info(f"Testing weather query: '{query}'")
+            payload = {"message": query}
+            response = tester.session.post(
+                f"{BASE_URL}/chat/{tester.chat_session_id}", 
+                json=payload,
+                params={"user_id": tester.test_user_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            # Check for weather indicators
+            weather_indicators = ["temperature", "degrees", "°F", "wind", "mph", "sunny", "cloudy", "rain"]
+            has_weather_data = any(indicator.lower() in data["message"].lower() for indicator in weather_indicators)
+            
+            # Check for Southern personality
+            southern_markers = ["y'all", "sugar", "honey", "darlin'", "sweetie"]
+            has_southern_style = any(marker.lower() in data["message"].lower() for marker in southern_markers)
+            
+            result = {
+                "query": query,
+                "response": data["message"],
+                "has_weather_data": has_weather_data,
+                "has_southern_style": has_southern_style,
+                "passed": has_weather_data and has_southern_style
+            }
+            weather_results.append(result)
+            logger.info(f"Weather query test {'PASSED' if result['passed'] else 'FAILED'}")
+            logger.info(f"Response: {data['message']}")
+            logger.info(f"Has weather data: {has_weather_data}")
+            logger.info(f"Has Southern style: {has_southern_style}")
+            
+        except Exception as e:
+            logger.error(f"Error testing weather query: {e}")
+            weather_results.append({
+                "query": query,
+                "error": str(e),
+                "passed": False
+            })
+    
+    # Test 2: Web Search Testing
+    logger.info("\n=== TESTING SMART DAISY WEB SEARCH FUNCTIONALITY ===")
+    search_queries = [
+        "Where can I find good restaurants?",
+        "Best pizza near the festival?"
+    ]
+    
+    search_results = []
+    for query in search_queries:
+        try:
+            logger.info(f"Testing search query: '{query}'")
+            payload = {"message": query}
+            response = tester.session.post(
+                f"{BASE_URL}/chat/{tester.chat_session_id}", 
+                json=payload,
+                params={"user_id": tester.test_user_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            # Check for search-specific information
+            search_indicators = ["restaurant", "food", "eat", "dining", "cafe", "bar", "grill", "pizza"]
+            has_search_data = any(indicator.lower() in data["message"].lower() for indicator in search_indicators)
+            
+            # Check for specific business names or addresses
+            specific_indicators = ["street", "avenue", "located", "open", "serves", "menu", "popular"]
+            has_specific_data = any(indicator.lower() in data["message"].lower() for indicator in specific_indicators)
+            
+            # Check for Southern personality
+            southern_markers = ["y'all", "sugar", "honey", "darlin'", "sweetie"]
+            has_southern_style = any(marker.lower() in data["message"].lower() for marker in southern_markers)
+            
+            result = {
+                "query": query,
+                "response": data["message"],
+                "has_search_data": has_search_data,
+                "has_specific_data": has_specific_data,
+                "has_southern_style": has_southern_style,
+                "passed": has_search_data and has_southern_style
+            }
+            search_results.append(result)
+            logger.info(f"Search query test {'PASSED' if result['passed'] else 'FAILED'}")
+            logger.info(f"Response: {data['message']}")
+            logger.info(f"Has search data: {has_search_data}")
+            logger.info(f"Has specific data: {has_specific_data}")
+            logger.info(f"Has Southern style: {has_southern_style}")
+            
+        except Exception as e:
+            logger.error(f"Error testing search query: {e}")
+            search_results.append({
+                "query": query,
+                "error": str(e),
+                "passed": False
+            })
+    
+    # Test 3: Location Query Testing
+    logger.info("\n=== TESTING SMART DAISY LOCATION FUNCTIONALITY ===")
+    location_queries = [
+        "How many people are in our group?",
+        "Where is everyone?"
+    ]
+    
+    # First update location to ensure there's data
+    try:
+        location_payload = {
+            "latitude": 39.0056,
+            "longitude": -74.8157,
+            "accuracy": 10.5,
+            "ghost_mode": False
+        }
+        tester.session.post(f"{BASE_URL}/location/update/{tester.test_user_id}", json=location_payload)
+    except Exception as e:
+        logger.error(f"Error setting up location data: {e}")
+    
+    location_results = []
+    for query in location_queries:
+        try:
+            logger.info(f"Testing location query: '{query}'")
+            payload = {"message": query}
+            response = tester.session.post(
+                f"{BASE_URL}/chat/{tester.chat_session_id}", 
+                json=payload,
+                params={"user_id": tester.test_user_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            # Check for location/group specific information
+            location_indicators = ["people", "group", "members", "users", "visible", "ghost"]
+            has_location_data = any(indicator.lower() in data["message"].lower() for indicator in location_indicators)
+            
+            # Check for Southern personality
+            southern_markers = ["y'all", "sugar", "honey", "darlin'", "sweetie"]
+            has_southern_style = any(marker.lower() in data["message"].lower() for marker in southern_markers)
+            
+            result = {
+                "query": query,
+                "response": data["message"],
+                "has_location_data": has_location_data,
+                "has_southern_style": has_southern_style,
+                "passed": has_location_data and has_southern_style
+            }
+            location_results.append(result)
+            logger.info(f"Location query test {'PASSED' if result['passed'] else 'FAILED'}")
+            logger.info(f"Response: {data['message']}")
+            logger.info(f"Has location data: {has_location_data}")
+            logger.info(f"Has Southern style: {has_southern_style}")
+            
+        except Exception as e:
+            logger.error(f"Error testing location query: {e}")
+            location_results.append({
+                "query": query,
+                "error": str(e),
+                "passed": False
+            })
+    
+    # Test 4: General Chat Testing
+    logger.info("\n=== TESTING SMART DAISY GENERAL CHAT FUNCTIONALITY ===")
+    general_queries = [
+        "Hello Daisy!",
+        "Tell me about the festival"
+    ]
+    
+    general_results = []
+    for query in general_queries:
+        try:
+            logger.info(f"Testing general query: '{query}'")
+            payload = {"message": query}
+            response = tester.session.post(
+                f"{BASE_URL}/chat/{tester.chat_session_id}", 
+                json=payload,
+                params={"user_id": tester.test_user_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            # Check for festival information
+            festival_indicators = ["festival", "barefoot", "country", "music", "wildwood", "beach"]
+            has_festival_info = any(indicator.lower() in data["message"].lower() for indicator in festival_indicators)
+            
+            # Check for Southern personality
+            southern_markers = ["y'all", "sugar", "honey", "darlin'", "sweetie"]
+            has_southern_style = any(marker.lower() in data["message"].lower() for marker in southern_markers)
+            
+            result = {
+                "query": query,
+                "response": data["message"],
+                "has_festival_info": has_festival_info,
+                "has_southern_style": has_southern_style,
+                "passed": has_festival_info and has_southern_style
+            }
+            general_results.append(result)
+            logger.info(f"General query test {'PASSED' if result['passed'] else 'FAILED'}")
+            logger.info(f"Response: {data['message']}")
+            logger.info(f"Has festival info: {has_festival_info}")
+            logger.info(f"Has Southern style: {has_southern_style}")
+            
+        except Exception as e:
+            logger.error(f"Error testing general query: {e}")
+            general_results.append({
+                "query": query,
+                "error": str(e),
+                "passed": False
+            })
+    
+    # Summarize results
+    logger.info("\n=== SMART DAISY FUNCTIONALITY TEST SUMMARY ===")
+    
+    weather_passed = all(result.get("passed", False) for result in weather_results)
+    search_passed = all(result.get("passed", False) for result in search_results)
+    location_passed = all(result.get("passed", False) for result in location_results)
+    general_passed = all(result.get("passed", False) for result in general_results)
+    
+    logger.info(f"Weather Query Tests: {'PASSED' if weather_passed else 'FAILED'}")
+    logger.info(f"Web Search Tests: {'PASSED' if search_passed else 'FAILED'}")
+    logger.info(f"Location Query Tests: {'PASSED' if location_passed else 'FAILED'}")
+    logger.info(f"General Chat Tests: {'PASSED' if general_passed else 'FAILED'}")
+    
+    overall_passed = weather_passed and search_passed and location_passed and general_passed
+    logger.info(f"Overall Smart Daisy Functionality: {'PASSED' if overall_passed else 'FAILED'}")
+    
+    return {
+        "overall_passed": overall_passed,
+        "weather_passed": weather_passed,
+        "search_passed": search_passed,
+        "location_passed": location_passed,
+        "general_passed": general_passed,
+        "weather_results": weather_results,
+        "search_results": search_results,
+        "location_results": location_results,
+        "general_results": general_results
+    }
+
 if __name__ == "__main__":
+    # Run standard tests
     tester = BarefootBuddyTester()
     tester.run_all_tests()
+    
+    # Run Smart Daisy specific tests
+    logger.info("\n\n=== RUNNING SMART DAISY FUNCTIONALITY TESTS ===\n")
+    smart_daisy_results = test_smart_daisy_functionality()
+    
+    # Print final summary
+    logger.info("\n=== FINAL TEST SUMMARY ===")
+    if isinstance(smart_daisy_results, dict):
+        logger.info(f"Smart Daisy Functionality: {'PASSED' if smart_daisy_results.get('overall_passed', False) else 'FAILED'}")
+        logger.info(f"- Weather Queries: {'PASSED' if smart_daisy_results.get('weather_passed', False) else 'FAILED'}")
+        logger.info(f"- Web Search Queries: {'PASSED' if smart_daisy_results.get('search_passed', False) else 'FAILED'}")
+        logger.info(f"- Location Queries: {'PASSED' if smart_daisy_results.get('location_passed', False) else 'FAILED'}")
+        logger.info(f"- General Chat: {'PASSED' if smart_daisy_results.get('general_passed', False) else 'FAILED'}")
+    else:
+        logger.info("Smart Daisy Functionality: FAILED (Test execution error)")
