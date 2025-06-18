@@ -88,8 +88,13 @@ body {
     font-weight: 600;
 }
 
-.neon-green {
-    color: #00ff00;
+.neon-purple {
+    color: #a855f7;
+    font-weight: 600;
+}
+
+.neon-pink {
+    color: #ec4899;
     font-weight: 600;
 }
 
