@@ -7,32 +7,32 @@ const Toaster = () => {
   const { toasts } = useToast()
 
   return (
-    <div className="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]">
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] flex max-h-screen w-full max-w-sm flex-col p-4">
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <div
             key={id}
             className={cn(
-              "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
-              "bg-background text-foreground border-border"
+              "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-lg p-4 pr-8 shadow-2xl transition-all mb-2",
+              "bg-gray-900/95 backdrop-blur-sm text-white border-2 border-cyan-400/50 neon-border"
             )}
             {...props}
           >
-            <div className="grid gap-1">
+            <div className="grid gap-1 flex-1">
               {title && (
-                <div className="text-sm font-semibold">
+                <div className="text-sm font-bold text-white">
                   {title}
                 </div>
               )}
               {description && (
-                <div className="text-sm opacity-90">
+                <div className="text-sm text-gray-200">
                   {description}
                 </div>
               )}
             </div>
             {action}
             <button
-              className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100"
+              className="absolute right-2 top-2 rounded-md p-1 text-gray-400 hover:text-white focus:opacity-100 focus:outline-none transition-colors"
               onClick={() => props.onOpenChange?.(false)}
             >
               <X className="h-4 w-4" />
