@@ -42,6 +42,30 @@ const LocationTracker = () => {
     };
   }, [ghostMode]);
 
+  const fetchCurrentUserStatus = async () => {
+    try {
+      // Try to get current user's location data from MongoDB to check ghost mode status
+      const response = await axios.get(`${API_BASE_URL}/location/group/default`);
+      const locations = response.data.locations || {};
+      
+      // Also check MongoDB directly for user's full data including ghost mode
+      const userResponse = await axios.get(`${API_BASE_URL}/presence/group/default`);
+      const presenceData = userResponse.data.presence || {};
+      
+      if (presenceData[userId]) {
+        const userPresence = presenceData[userId];
+        if (typeof userPresence.ghost_mode === 'boolean') {
+          setGhostMode(userPresence.ghost_mode);
+          console.log('Loaded ghost mode status:', userPresence.ghost_mode);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching current user status:', error);
+      // Default to not ghost mode if we can't fetch status
+      setGhostMode(false);
+    }
+  };
+
   const initializeLocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
