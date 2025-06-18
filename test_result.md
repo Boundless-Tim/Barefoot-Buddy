@@ -249,8 +249,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Update Frontend to Use Real Backend APIs"
-    - "Firebase Frontend Integration"
     - "Mapbox Integration"
   stuck_tasks: []
   test_all: false
