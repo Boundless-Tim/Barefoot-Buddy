@@ -240,9 +240,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "FastAPI Backend Server"
-    - "Firebase Location Tracking Service"
-    - "OpenAI Chat Integration - Daisy DukeBot"
+    - "Update Frontend to Use Real Backend APIs"
+    - "Firebase Frontend Integration"
+    - "Mapbox Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
