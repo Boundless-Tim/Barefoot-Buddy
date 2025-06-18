@@ -145,28 +145,43 @@ const SetlistScheduler = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-2">
+            <div className="max-h-48 overflow-y-auto space-y-2 pr-2">
               {artists
                 .filter(artist => starredArtists.has(artist.id))
                 .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
-                .slice(0, 3)
                 .map(artist => (
-                  <div key={artist.id} className="flex items-center justify-between p-2 rounded-lg bg-black/20">
-                    <div>
-                      <p className="font-bold readable-text">{artist.name}</p>
-                      <p className="text-sm readable-subtitle">{artist.day} • {formatTime(artist.startTime)}</p>
+                  <div key={artist.id} className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-yellow-400/20">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold readable-text truncate">{artist.name}</p>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="readable-subtitle">{artist.day}</span>
+                        <span className="text-yellow-400">•</span>
+                        <span className="readable-subtitle">{formatTime(artist.startTime)}</span>
+                        <span className="text-yellow-400">•</span>
+                        <span className="readable-subtitle text-xs">{artist.stage}</span>
+                      </div>
                     </div>
-                    {isCurrentlyPlaying(artist) && (
-                      <Badge className="bg-red-600 text-white animate-pulse">LIVE</Badge>
-                    )}
+                    <div className="flex items-center gap-2 ml-2">
+                      {isCurrentlyPlaying(artist) && (
+                        <Badge className="bg-red-600 text-white animate-pulse text-xs">LIVE</Badge>
+                      )}
+                      <button
+                        onClick={() => toggleStar(artist.id)}
+                        className="text-yellow-400 hover:text-yellow-300 transition-colors p-1"
+                      >
+                        <Star className="h-4 w-4 fill-yellow-400" />
+                      </button>
+                    </div>
                   </div>
                 ))}
-              {starredArtists.size > 3 && (
-                <p className="text-sm readable-subtitle text-center">
-                  +{starredArtists.size - 3} more starred artists
-                </p>
-              )}
             </div>
+            {starredArtists.size > 5 && (
+              <div className="text-center mt-3 pt-3 border-t border-gray-600/30">
+                <p className="text-xs readable-subtitle">
+                  Scroll to see all {starredArtists.size} starred artists
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
