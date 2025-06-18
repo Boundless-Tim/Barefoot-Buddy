@@ -16,7 +16,8 @@ import {
   Star,
   Timer,
   Navigation,
-  Thermometer
+  Thermometer,
+  ChevronRight
 } from 'lucide-react';
 import { mockWeather, mockArtists, mockDrinkRound, mockUsers } from '../data/mock';
 
@@ -80,7 +81,7 @@ const Dashboard = ({ setActiveTab }) => {
         <p className="text-base readable-text">Your command center for Barefoot Country</p>
       </div>
 
-      {/* Weather Card */}
+      {/* Weather Card - Clickable but no navigation needed */}
       <Card className="electric-glass border-2 border-cyan-400 neon-hover">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-3 text-lg festival-font neon-blue">
@@ -116,12 +117,18 @@ const Dashboard = ({ setActiveTab }) => {
         </CardContent>
       </Card>
 
-      {/* Now Playing / Next Favorite */}
-      <Card className="electric-glass border-2 border-purple-400 neon-hover">
+      {/* Now Playing / Next Favorite - Clickable to Setlist */}
+      <Card 
+        className="electric-glass border-2 border-purple-400 neon-hover cursor-pointer transform transition-all duration-200 hover:scale-105"
+        onClick={() => setActiveTab('setlist')}
+      >
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-3 text-lg festival-font neon-yellow">
-            <Star className="h-6 w-6 icon-glow" />
-            <span>{currentArtist ? 'Now Playing' : 'Next Favorite'}</span>
+          <CardTitle className="flex items-center justify-between text-lg festival-font neon-yellow">
+            <div className="flex items-center gap-3">
+              <Star className="h-6 w-6 icon-glow" />
+              <span>{currentArtist ? 'Now Playing' : 'Next Favorite'}</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400" />
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -156,25 +163,24 @@ const Dashboard = ({ setActiveTab }) => {
           ) : (
             <div className="text-center py-4">
               <p className="readable-subtitle">No starred performances coming up</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-2"
-                onClick={() => setActiveTab('setlist')}
-              >
-                Star Some Acts
-              </Button>
+              <p className="text-xs readable-subtitle mt-1">Click to star some acts</p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Drink Round Tracker */}
-      <Card className="electric-glass border-2 border-yellow-400 neon-hover">
+      {/* Drink Round Tracker - Clickable to Drinks */}
+      <Card 
+        className="electric-glass border-2 border-yellow-400 neon-hover cursor-pointer transform transition-all duration-200 hover:scale-105"
+        onClick={() => setActiveTab('drinks')}
+      >
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-3 text-lg festival-font neon-green">
-            <Beer className="h-6 w-6 icon-glow" />
-            <span>Drink Rounds</span>
+          <CardTitle className="flex items-center justify-between text-lg festival-font neon-green">
+            <div className="flex items-center gap-3">
+              <Beer className="h-6 w-6 icon-glow" />
+              <span>Drink Rounds</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400" />
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -195,15 +201,42 @@ const Dashboard = ({ setActiveTab }) => {
         </CardContent>
       </Card>
 
-      {/* Group Locator Summary */}
-      <Card className="electric-glass border-2 border-green-400 neon-hover">
+      {/* Group Locator with Mini Map - Clickable to Location */}
+      <Card 
+        className="electric-glass border-2 border-green-400 neon-hover cursor-pointer transform transition-all duration-200 hover:scale-105"
+        onClick={() => setActiveTab('location')}
+      >
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-3 text-lg festival-font neon-blue">
-            <Navigation className="h-6 w-6 icon-glow" />
-            <span>Group Status</span>
+          <CardTitle className="flex items-center justify-between text-lg festival-font neon-blue">
+            <div className="flex items-center gap-3">
+              <Navigation className="h-6 w-6 icon-glow" />
+              <span>Group Locator</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400" />
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Mini Map */}
+          <div className="relative electric-gradient rounded-xl h-32 flex items-center justify-center overflow-hidden shadow-inner border border-cyan-300 mb-4">
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-2 left-2 w-3 h-3 neon-blue rounded-full animate-pulse"></div>
+              <div className="absolute top-4 right-6 w-2 h-2 neon-yellow rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+              <div className="absolute bottom-6 left-4 w-4 h-4 neon-green rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+              <div className="absolute bottom-2 right-2 w-2 h-2 neon-blue rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
+            </div>
+            
+            <div className="relative z-10 text-center">
+              <p className="text-sm font-bold neon-blue">Live Festival Map</p>
+              <p className="text-xs readable-subtitle">Tap to view full map</p>
+            </div>
+            
+            {/* Mock location pins */}
+            <div className="absolute top-4 left-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-full w-3 h-3 border border-white shadow-lg animate-bounce"></div>
+            <div className="absolute bottom-8 right-8 bg-gradient-to-r from-green-500 to-teal-500 rounded-full w-3 h-3 border border-white shadow-lg animate-bounce" style={{animationDelay: '0.5s'}}></div>
+            <div className="absolute top-1/2 left-1/2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full w-4 h-4 border border-white shadow-lg animate-bounce transform -translate-x-1/2 -translate-y-1/2" style={{animationDelay: '1s'}}></div>
+          </div>
+
+          {/* Group Status */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -230,13 +263,6 @@ const Dashboard = ({ setActiveTab }) => {
         <CardContent>
           <div className="grid grid-cols-2 gap-3">
             <Button 
-              onClick={() => setActiveTab('location')}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white"
-            >
-              <MapPin className="h-4 w-4 mr-2" />
-              Open Map
-            </Button>
-            <Button 
               onClick={() => setActiveTab('daisy')}
               className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white"
             >
@@ -244,18 +270,25 @@ const Dashboard = ({ setActiveTab }) => {
               Chat with Daisy
             </Button>
             <Button 
-              onClick={() => setActiveTab('setlist')}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white"
-            >
-              <Clock className="h-4 w-4 mr-2" />
-              Full Setlist
-            </Button>
-            <Button 
               onClick={() => window.open('https://barefootcountrymusicfest.com', '_blank')}
               className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-400 hover:to-teal-400 text-white"
             >
               <ExternalLink className="h-4 w-4 mr-2" />
               Official Site
+            </Button>
+            <Button 
+              onClick={() => setActiveTab('setlist')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white"
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Full Schedule
+            </Button>
+            <Button 
+              onClick={() => setActiveTab('links')}
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white"
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              More Links
             </Button>
           </div>
         </CardContent>
