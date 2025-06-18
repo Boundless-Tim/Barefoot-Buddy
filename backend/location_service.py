@@ -82,18 +82,21 @@ class LocationService:
             }
             
             # Update Firebase (only if not in ghost mode)
-            if not ghost_mode:
-                self.locations_ref.child(user_id).set(location_update)
-            else:
-                # Remove location when in ghost mode
-                self.locations_ref.child(user_id).delete()
-            
-            # Always update presence
-            self.presence_ref.child(user_id).set({
-                'online': True,
-                'last_seen': timestamp,
-                'ghost_mode': ghost_mode
-            })
+            try:
+                if not ghost_mode:
+                    self.locations_ref.child(user_id).set(location_update)
+                else:
+                    # Remove location when in ghost mode
+                    self.locations_ref.child(user_id).delete()
+                
+                # Always update presence
+                self.presence_ref.child(user_id).set({
+                    'online': True,
+                    'last_seen': timestamp,
+                    'ghost_mode': ghost_mode
+                })
+            except Exception as firebase_error:
+                logger.error(f"Firebase update failed, continuing with MongoDB: {firebase_error}")
 
             # Also store in MongoDB for persistence
             await self.db.user_locations.update_one(
