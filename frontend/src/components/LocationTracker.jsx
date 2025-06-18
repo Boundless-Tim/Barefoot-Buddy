@@ -20,8 +20,8 @@ const LocationTracker = () => {
   const userId = localStorage.getItem('userName') || 'User_' + Math.random().toString(36).substr(2, 5);
 
   useEffect(() => {
-    initializeLocation();
     fetchCurrentUserStatus();
+    initializeLocation();
     fetchGroupLocations();
     
     // Set up interval to update location every 15 seconds
