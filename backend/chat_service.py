@@ -107,39 +107,31 @@ class DaisyDukeBotService:
             logger.error(f"Error getting group locations: {e}")
             return {"error": "Location data unavailable"}
 
-    def _search_web(self, query: str) -> Dict:
-        """Search the web using LangSearch API"""
+    async def _search_web_async(self, query: str) -> Dict:
+        """Search the web using LangSearch API (async version)"""
         if not self.langsearch_key:
             return {"error": "Web search not available - no API key configured"}
         
         try:
-            import asyncio
             import httpx
             
-            async def fetch_search_results():
-                async with httpx.AsyncClient() as client:
-                    response = await client.post(
-                        "https://api.langsearch.com/v1/web-search",
-                        headers={
-                            "Authorization": f"Bearer {self.langsearch_key}",
-                            "Content-Type": "application/json"
-                        },
-                        json={
-                            "query": f"{query} near Wildwood, NJ",
-                            "freshness": "oneYear",
-                            "summary": True,
-                            "count": 5
-                        },
-                        timeout=10
-                    )
-                    response.raise_for_status()
-                    return response.json()
-            
-            # Run async function in sync context
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            result = loop.run_until_complete(fetch_search_results())
-            loop.close()
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    "https://api.langsearch.com/v1/web-search",
+                    headers={
+                        "Authorization": f"Bearer {self.langsearch_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "query": f"{query} near Wildwood, NJ",
+                        "freshness": "oneYear",
+                        "summary": True,
+                        "count": 5
+                    },
+                    timeout=10
+                )
+                response.raise_for_status()
+                result = response.json()
             
             # Extract relevant information
             search_summary = ""
@@ -158,6 +150,31 @@ class DaisyDukeBotService:
             
         except Exception as e:
             logger.error(f"Error in LangSearch web search: {e}")
+            return {"query": query, "error": f"Search temporarily unavailable: {str(e)}"}
+
+    def _search_web(self, query: str) -> Dict:
+        """Search the web using LangSearch API (sync wrapper)"""
+        try:
+            import asyncio
+            
+            # Try to get existing event loop
+            try:
+                loop = asyncio.get_running_loop()
+                # If we're in an async context, we need to use run_in_executor
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(asyncio.run, self._search_web_async(query))
+                    return future.result(timeout=15)
+            except RuntimeError:
+                # No loop running, we can create one
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                result = loop.run_until_complete(self._search_web_async(query))
+                loop.close()
+                return result
+                
+        except Exception as e:
+            logger.error(f"Error in web search wrapper: {e}")
             return {"query": query, "error": f"Search temporarily unavailable: {str(e)}"}
     
 
