@@ -91,35 +91,58 @@ class DaisyDukeBotService:
             return {"error": "Location data unavailable"}
 
     def _search_web(self, query: str) -> Dict:
-        """Search the web using Perplexity API"""
-        if not self.perplexity_key:
+        """Search the web using LangSearch API"""
+        if not self.langsearch_key:
             return {"error": "Web search not available - no API key configured"}
         
         try:
-            messages = [
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant that provides current information about local businesses, events, and recommendations near Wildwood, NJ. Focus on practical, actionable information."
-                },
-                {
-                    "role": "user", 
-                    "content": f"Search for information about: {query}. Please provide current, relevant results with specific details."
-                }
-            ]
+            import asyncio
+            import httpx
             
-            response = self.search_client.chat.completions.create(
-                model="sonar",
-                messages=messages,
-                max_tokens=500
-            )
+            async def fetch_search_results():
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        "https://api.langsearch.com/v1/web-search",
+                        headers={
+                            "Authorization": f"Bearer {self.langsearch_key}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "query": f"{query} near Wildwood, NJ",
+                            "freshness": "oneYear",
+                            "summary": True,
+                            "count": 5
+                        },
+                        timeout=10
+                    )
+                    response.raise_for_status()
+                    return response.json()
+            
+            # Run async function in sync context
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            result = loop.run_until_complete(fetch_search_results())
+            loop.close()
+            
+            # Extract relevant information
+            search_summary = ""
+            if result.get("web_pages"):
+                # Get top 3 results summary
+                for page in result["web_pages"][:3]:
+                    search_summary += f"• {page.get('title', 'No title')}: {page.get('snippet', 'No description')}\n"
+            
+            if result.get("summary"):
+                search_summary = result["summary"] + "\n\n" + search_summary
             
             return {
                 "query": query,
-                "result": response.choices[0].message.content
+                "result": search_summary if search_summary else "No specific results found, but try checking local directories or calling ahead."
             }
+            
         except Exception as e:
-            logger.error(f"Error in web search: {e}")
-            return {"query": query, "error": "Search unavailable"}
+            logger.error(f"Error in LangSearch web search: {e}")
+            return {"query": query, "error": f"Search temporarily unavailable: {str(e)}"}
+    
 
     async def create_chat_session(self, user_id: str) -> str:
         """Create a new chat session for a user"""
