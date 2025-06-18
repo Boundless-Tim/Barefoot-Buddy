@@ -215,7 +215,7 @@ const LocationTracker = () => {
         description: newGhostMode 
           ? "You're now invisible to other users" 
           : "Your friends can see you again!",
-        duration: 3000
+        duration: 2000
       });
     } catch (error) {
       console.error('Error toggling ghost mode:', error);
