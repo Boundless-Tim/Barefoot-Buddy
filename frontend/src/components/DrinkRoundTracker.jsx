@@ -64,35 +64,52 @@ const DrinkRoundTracker = () => {
     }
   };
 
-  const completeRound = () => {
+  const completeRound = async () => {
+    if (!drinkData) return;
+    
     const currentBuyer = drinkData.nextUp;
     const currentIndex = drinkData.participants.indexOf(currentBuyer);
     const nextIndex = (currentIndex + 1) % drinkData.participants.length;
     const nextBuyer = drinkData.participants[nextIndex];
     
-    setDrinkData(prev => ({
-      ...prev,
-      currentRound: prev.currentRound + 1,
-      nextUp: nextBuyer,
-      barefootPoints: {
-        ...prev.barefootPoints,
-        [currentBuyer]: prev.barefootPoints[currentBuyer] + 5
-      },
-      roundHistory: [
-        ...prev.roundHistory,
-        {
-          round: prev.currentRound + 1,
-          buyer: currentBuyer,
-          timestamp: new Date().toISOString()
-        }
-      ]
-    }));
-
-    toast({
-      title: `${nextBuyer}'s up! 🍻`,
-      description: `Get movin', cowboy! ${currentBuyer} earned 5 Barefoot Points! 🤠⭐`,
-      duration: 5000
-    });
+    try {
+      // Update backend
+      await axios.post(`${API_BASE_URL}/api/drinks/complete`, null, {
+        params: { user_id: currentBuyer }
+      });
+      
+      // Update local state
+      setDrinkData(prev => ({
+        ...prev,
+        currentRound: prev.currentRound + 1,
+        nextUp: nextBuyer,
+        lastCompleted: currentBuyer,
+        barefootPoints: {
+          ...prev.barefootPoints,
+          [currentBuyer]: (prev.barefootPoints[currentBuyer] || 0) + 5
+        },
+        roundHistory: [
+          ...(prev.roundHistory || []),
+          {
+            round: prev.currentRound + 1,
+            buyer: currentBuyer,
+            timestamp: new Date().toISOString()
+          }
+        ]
+      }));
+      
+      toast({
+        title: "Round completed! 🍻",
+        description: `${currentBuyer} bought the round and earned 5 Barefoot Points! Next up: ${nextBuyer}`,
+      });
+    } catch (error) {
+      console.error('Error completing round:', error);
+      toast({
+        title: "Oops! 😅",
+        description: "Couldn't update the round. Try again, y'all!",
+        variant: "destructive"
+      });
+    }
   };
 
   const resetRounds = () => {
