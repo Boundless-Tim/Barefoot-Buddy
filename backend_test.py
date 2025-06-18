@@ -240,6 +240,124 @@ class BarefootBuddyTester:
             logger.error(f"Chat history test failed: {e}")
             self.log_test_result("Chat History", False, {"error": str(e)})
             return False
+            
+    def test_function_calling_weather(self):
+        """Test function calling for weather queries"""
+        if not self.chat_session_id:
+            self.log_test_result("Function Calling - Weather", False, {"error": "No chat session ID available"})
+            return False
+        
+        try:
+            # Test message that should trigger weather function call
+            payload = {"message": "What's the weather like at the festival?"}
+            response = self.session.post(
+                f"{BASE_URL}/chat/{self.chat_session_id}", 
+                json=payload,
+                params={"user_id": self.test_user_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            passed = "message" in data and "isBot" in data and data["isBot"] == True
+            
+            # Check for weather-specific information that would come from function call
+            weather_indicators = ["temperature", "degrees", "°F", "wind", "mph", "sunny", "cloudy", "rain"]
+            has_weather_data = any(indicator.lower() in data["message"].lower() for indicator in weather_indicators)
+            
+            # Check for Wildwood specific mention
+            location_indicators = ["wildwood", "new jersey", "nj", "beach"]
+            has_location_data = any(indicator.lower() in data["message"].lower() for indicator in location_indicators)
+            
+            self.log_test_result("Function Calling - Weather", passed and has_weather_data, {
+                "response": data["message"],
+                "has_weather_data": has_weather_data,
+                "has_location_data": has_location_data
+            })
+            return passed and has_weather_data
+        except Exception as e:
+            logger.error(f"Weather function calling test failed: {e}")
+            self.log_test_result("Function Calling - Weather", False, {"error": str(e)})
+            return False
+            
+    def test_function_calling_location(self):
+        """Test function calling for location queries"""
+        if not self.chat_session_id:
+            self.log_test_result("Function Calling - Location", False, {"error": "No chat session ID available"})
+            return False
+        
+        try:
+            # First update location to ensure there's data
+            location_payload = {
+                "latitude": 39.0056,
+                "longitude": -74.8157,
+                "accuracy": 10.5,
+                "ghost_mode": False
+            }
+            self.session.post(f"{BASE_URL}/location/update/{self.test_user_id}", json=location_payload)
+            
+            # Test message that should trigger location function call
+            payload = {"message": "How many people are in our group?"}
+            response = self.session.post(
+                f"{BASE_URL}/chat/{self.chat_session_id}", 
+                json=payload,
+                params={"user_id": self.test_user_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            passed = "message" in data and "isBot" in data and data["isBot"] == True
+            
+            # Check for location/group specific information that would come from function call
+            location_indicators = ["people", "group", "members", "users", "visible", "ghost"]
+            has_location_data = any(indicator.lower() in data["message"].lower() for indicator in location_indicators)
+            
+            self.log_test_result("Function Calling - Location", passed and has_location_data, {
+                "response": data["message"],
+                "has_location_data": has_location_data
+            })
+            return passed and has_location_data
+        except Exception as e:
+            logger.error(f"Location function calling test failed: {e}")
+            self.log_test_result("Function Calling - Location", False, {"error": str(e)})
+            return False
+            
+    def test_function_calling_search(self):
+        """Test function calling for web search queries"""
+        if not self.chat_session_id:
+            self.log_test_result("Function Calling - Search", False, {"error": "No chat session ID available"})
+            return False
+        
+        try:
+            # Test message that should trigger web search function call
+            payload = {"message": "Where can we get good food near the festival?"}
+            response = self.session.post(
+                f"{BASE_URL}/chat/{self.chat_session_id}", 
+                json=payload,
+                params={"user_id": self.test_user_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            passed = "message" in data and "isBot" in data and data["isBot"] == True
+            
+            # Check for search-specific information that would come from function call
+            search_indicators = ["restaurant", "food", "eat", "dining", "cafe", "bar", "grill"]
+            has_search_data = any(indicator.lower() in data["message"].lower() for indicator in search_indicators)
+            
+            # Check for specific business names or addresses that would indicate real search results
+            specific_indicators = ["street", "avenue", "located", "open", "serves", "menu", "popular"]
+            has_specific_data = any(indicator.lower() in data["message"].lower() for indicator in specific_indicators)
+            
+            self.log_test_result("Function Calling - Search", passed and has_search_data, {
+                "response": data["message"],
+                "has_search_data": has_search_data,
+                "has_specific_data": has_specific_data
+            })
+            return passed and has_search_data
+        except Exception as e:
+            logger.error(f"Search function calling test failed: {e}")
+            self.log_test_result("Function Calling - Search", False, {"error": str(e)})
+            return False
 
     def test_location_update(self):
         """Test updating user location"""
