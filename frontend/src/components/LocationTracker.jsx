@@ -193,6 +193,9 @@ const LocationTracker = () => {
       const newGhostMode = !ghostMode;
       setGhostMode(newGhostMode);
       
+      // Save to localStorage for persistence
+      localStorage.setItem(`${userId}_ghostMode`, newGhostMode.toString());
+      
       // Update backend
       await axios.post(`${API_BASE_URL}/location/ghost-mode/${userId}`, {
         ghost_mode: newGhostMode
@@ -216,6 +219,8 @@ const LocationTracker = () => {
       });
     } catch (error) {
       console.error('Error toggling ghost mode:', error);
+      // Revert localStorage if backend fails
+      localStorage.setItem(`${userId}_ghostMode`, ghostMode.toString());
       toast({
         title: "Oops! 😅",
         description: "Couldn't update ghost mode. Try again!",
