@@ -29,31 +29,25 @@ class DaisyDukeBotService:
             import httpx
             self.search_client = httpx.AsyncClient()
 
-    def _get_current_weather(self, location: str = "Wildwood, NJ") -> Dict:
-        """Get current weather data"""
+    def _get_weather_from_openai(self) -> Dict:
+        """Get weather data using OpenAI prompt API"""
         try:
-            # Import here to avoid circular imports
-            from weather_service import WeatherService
-            import asyncio
+            openai_client = OpenAI(api_key=self.openai_api_key)
             
-            weather_service = WeatherService()
-            
-            # Run async function in sync context
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            weather_data = loop.run_until_complete(weather_service.get_current_weather())
-            loop.close()
+            response = openai_client.responses.create(
+                prompt={
+                    "id": "pmpt_685238ede11881938cf93dbedcd19afa0c4dc65de6a4cfda",
+                    "version": "3"
+                }
+            )
             
             return {
-                "location": location,
-                "temperature": weather_data.get("temperature", "Unknown"),
-                "description": weather_data.get("description", "Unknown"),
-                "wind_speed": weather_data.get("windSpeed", "Unknown"),
-                "daisy_comment": weather_data.get("daisyComment", "")
+                "weather_response": response.text if hasattr(response, 'text') else str(response),
+                "source": "openai_prompt"
             }
         except Exception as e:
-            logger.error(f"Error getting weather: {e}")
-            return {"location": location, "error": "Weather data unavailable"}
+            logger.error(f"Error getting weather from OpenAI prompt: {e}")
+            return {"error": "Weather data unavailable", "source": "openai_prompt"}
 
     def _get_group_locations(self) -> Dict:
         """Get current group location data"""
