@@ -303,6 +303,31 @@ async def get_drink_round():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/drinks/complete")
+async def complete_drink_round(user_id: str):
+    """Complete a drink round"""
+    try:
+        # Update drink round logic here
+        # This is a simplified implementation
+        await db.drink_rounds.update_one(
+            {"active": True},
+            {
+                "$inc": {"currentRound": 1},
+                "$set": {"lastCompleted": user_id},
+                "$push": {
+                    "roundHistory": {
+                        "round": {"$add": ["$currentRound", 1]},
+                        "buyer": user_id,
+                        "timestamp": datetime.utcnow()
+                    }
+                }
+            }
+        )
+        
+        return {"status": "success", "message": "Drink round completed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/drinks/reset")
 async def reset_drink_rounds():
     """Reset drink rounds"""
