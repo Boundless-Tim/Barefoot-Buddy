@@ -1,226 +1,294 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { ScrollArea } from './ui/scroll-area';
-import { MessageCircle, Send, Bot, User } from 'lucide-react';
-import { mockChatHistory, festivalInfo } from '../data/mock';
-import { useToast } from '../hooks/use-toast';
+import { Send, MessageCircle, Loader2 } from 'lucide-react';
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const DaisyDukeBotChat = () => {
-  const [messages, setMessages] = useState(mockChatHistory);
-  const [inputMessage, setInputMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const scrollAreaRef = useRef(null);
-  const { toast } = useToast();
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
+  const [initializing, setInitializing] = useState(true);
+  const messagesEndRef = useRef(null);
+  const userId = 'user_' + Math.random().toString(36).substr(2, 9);
 
-  useEffect(() => {
-    // Auto-scroll to bottom when new messages arrive
-    if (scrollAreaRef.current) {
-      const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-      if (scrollElement) {
-        scrollElement.scrollTop = scrollElement.scrollHeight;
-      }
-    }
-  }, [messages]);
-
-  const generateBotResponse = (userMessage) => {
-    const message = userMessage.toLowerCase();
-    
-    // Festival info responses
-    if (message.includes('bag') || message.includes('policy')) {
-      return `Well sugar, ${festivalInfo.bagPolicy} Hope that helps, darlin'!`;
-    }
-    if (message.includes('food') || message.includes('eat')) {
-      return `Honey child, ${festivalInfo.food} My stomach's already grumblin' just thinkin' about it!`;
-    }
-    if (message.includes('parking') || message.includes('car')) {
-      return `Don't you worry bout that, sweetie! ${festivalInfo.parking} Easy as pie!`;
-    }
-    if (message.includes('weather') || message.includes('hot') || message.includes('rain')) {
-      return `${festivalInfo.weather} Perfect for dancin' barefoot in the sand, sugar!`;
-    }
-    if (message.includes('schedule') || message.includes('time') || message.includes('when')) {
-      return `${festivalInfo.schedule} Y'all gonna have the time of your lives!`;
-    }
-    
-    // General responses
-    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-      return "Well hey there, sugar! Daisy here, ready to help you have the best dang festival experience! What can this Southern belle do for ya?";
-    }
-    if (message.includes('thanks') || message.includes('thank you')) {
-      return "Aw shucks, you're sweeter than sweet tea! Anything for my festival family! Y'all have fun now, ya hear?";
-    }
-    if (message.includes('drink') || message.includes('beer') || message.includes('cocktail')) {
-      return "Honey, we got ice-cold beers, fruity cocktails, and everything in between! Stay hydrated in this beach heat, and don't forget to pace yourself, darlin'!";
-    }
-    if (message.includes('bathroom') || message.includes('restroom')) {
-      return "Sugar, there are clean restrooms scattered all around the festival grounds! Look for the big blue signs - can't miss 'em! They're air-conditioned too!";
-    }
-    if (message.includes('lost') || message.includes('find')) {
-      return "Don't you fret none, honey! Head to any of the bright yellow info tents, or just holler for security in those neon vests! We'll get you sorted quicker than a hiccup!";
-    }
-    
-    // Default responses
-    const defaultResponses = [
-      "Well butter my biscuit, that's a good question! Let me think on that for ya, sugar!",
-      "Honey child, you got me there! Why don't you check with the folks at the info tent? They know everything!",
-      "Sweet pea, I wish I knew more about that! But don't you worry - ask around, everyone here's friendly as can be!",
-      "Darlin', that's outside my wheelhouse! But I bet someone at the main stage can help ya out!"
-    ];
-    
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    // Initialize chat session when component mounts
+    initializeChatSession();
+  }, []);
+
+  const initializeChatSession = async () => {
+    try {
+      setInitializing(true);
+      
+      // Create a new chat session
+      const response = await axios.post(`${API_BASE_URL}/api/chat/session`, {
+        user_id: userId
+      });
+      
+      const newSessionId = response.data.session_id;
+      setSessionId(newSessionId);
+
+      // Try to load existing chat history
+      try {
+        const historyResponse = await axios.get(`${API_BASE_URL}/api/chat/history/${newSessionId}`);
+        const history = historyResponse.data.messages || [];
+        
+        if (history.length === 0) {
+          // If no history, add welcome message
+          setMessages([{
+            id: '1',
+            message: "Hey sugar! Welcome to Barefoot Country! I'm Daisy DukeBot, your Southern belle guide to all things festival. What can this darlin' help you with today?",
+            isBot: true,
+            timestamp: new Date().toISOString()
+          }]);
+        } else {
+          setMessages(history);
+        }
+      } catch (historyError) {
+        console.error('Error loading chat history:', historyError);
+        // Set welcome message if history fails
+        setMessages([{
+          id: '1',
+          message: "Hey sugar! Welcome to Barefoot Country! I'm Daisy DukeBot, your Southern belle guide to all things festival. What can this darlin' help you with today?",
+          isBot: true,
+          timestamp: new Date().toISOString()
+        }]);
+      }
+      
+    } catch (error) {
+      console.error('Error initializing chat session:', error);
+      // Fallback to local session without backend
+      setSessionId('local_session');
+      setMessages([{
+        id: '1',
+        message: "Well honey, I'm havin' a little trouble connectin' to my servers right now, but I'm still here to chat with ya! What's on your mind, sugar?",
+        isBot: true,
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setInitializing(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || loading) return;
 
     const userMessage = {
       id: Date.now().toString(),
-      message: inputMessage,
+      message: newMessage,
       isBot: false,
       timestamp: new Date().toISOString()
     };
 
+    // Add user message to chat
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
-    setIsTyping(true);
+    const currentMessage = newMessage;
+    setNewMessage('');
+    setLoading(true);
 
-    // Simulate typing delay
-    setTimeout(() => {
-      const botResponse = {
-        id: (Date.now() + 1).toString(),
-        message: generateBotResponse(inputMessage),
+    try {
+      if (sessionId && sessionId !== 'local_session') {
+        // Send message to real API
+        const response = await axios.post(
+          `${API_BASE_URL}/api/chat/${sessionId}?user_id=${userId}`,
+          { message: currentMessage }
+        );
+
+        const botResponse = response.data;
+        setMessages(prev => [...prev, botResponse]);
+      } else {
+        // Fallback response for local session
+        setTimeout(() => {
+          const fallbackResponse = {
+            id: Date.now().toString(),
+            message: "Well bless your heart! I'd love to help you with that, sugar, but I'm havin' some technical difficulties right now. Y'all come back and try again in a bit, would ya?",
+            isBot: true,
+            timestamp: new Date().toISOString()
+          };
+          setMessages(prev => [...prev, fallbackResponse]);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Add error message to chat
+      const errorResponse = {
+        id: Date.now().toString(),
+        message: "Oh honey, somethin' went wrong on my end! Give me just a moment and try again, would ya?",
         isBot: true,
         timestamp: new Date().toISOString()
       };
-      
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1500 + Math.random() * 1000); // Random delay 1.5-2.5 seconds
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
+  if (initializing) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 neon-blue" />
+          <p className="readable-text">Connecting to Daisy DukeBot...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="h-full flex flex-col space-y-4">
       {/* Header */}
-      <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold festival-font neon-pink flex items-center justify-center gap-2">
-          <MessageCircle className="h-8 w-8" />
-          <span>Daisy DukeBot</span>
+      <div className="text-center space-y-2 bounce-entrance">
+        <h2 className="text-3xl font-bold festival-font neon-blue flex items-center justify-center gap-3">
+          <MessageCircle className="h-8 w-8 neon-blue icon-glow" />
+          Daisy DukeBot
         </h2>
-        <p className="text-lg readable-text">Your sassy Southern festival guide!</p>
+        <p className="text-base readable-text">Your Southern belle festival guide</p>
       </div>
 
-      {/* Chat Interface */}
-      <Card className="electric-glass border-2 border-pink-400 h-96 flex flex-col">
-        <CardHeader className="electric-gradient border-b border-pink-300 pb-4">
-          <CardTitle className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-400 rounded-full flex items-center justify-center">
-              <Bot className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <p className="text-lg font-bold neon-pink">Daisy DukeBot</p>
-              <p className="text-sm readable-subtitle font-normal">
-                {isTyping ? 'Typing...' : 'Online and ready to help!'}
-              </p>
-            </div>
+      {/* Chat Container */}
+      <Card className="flex-1 electric-glass border-2 border-pink-400 neon-border flex flex-col overflow-hidden">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg festival-font neon-yellow flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+            <span>Chat Active</span>
+            {sessionId && sessionId !== 'local_session' && (
+              <span className="text-xs text-green-400 ml-2">✓ Connected</span>
+            )}
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="flex-1 flex flex-col p-0">
-          <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <div 
-                  key={message.id} 
-                  className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
-                >
-                  <div className={`max-w-[80%] flex gap-2 ${message.isBot ? 'flex-row' : 'flex-row-reverse'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      message.isBot 
-                        ? 'bg-gradient-to-br from-pink-400 to-rose-400' 
-                        : 'bg-gradient-to-br from-cyan-400 to-blue-400'
-                    }`}>
-                      {message.isBot ? (
-                        <Bot className="h-4 w-4 text-white" />
-                      ) : (
-                        <User className="h-4 w-4 text-white" />
-                      )}
-                    </div>
-                    <div className={`px-4 py-3 rounded-lg shadow-md ${
-                      message.isBot 
-                        ? 'electric-glass bg-pink-900/20 border border-pink-300 text-white' 
-                        : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white'
-                    }`}>
-                      <p className="text-sm leading-relaxed font-medium">{message.message}</p>
-                      <p className={`text-xs mt-2 opacity-70`}>
-                        {new Date(message.timestamp).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              
-              {isTyping && (
-                <div className="flex justify-start">
-                  <div className="flex gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-rose-400 flex items-center justify-center">
-                      <Bot className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="electric-glass bg-pink-900/20 border border-pink-300 px-4 py-3 rounded-lg">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-          
-          {/* Input Area */}
-          <div className="border-t border-pink-300 p-4 electric-gradient">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Ask Daisy anything about the festival..."
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                className="flex-1 bg-white/10 border-pink-300 text-white placeholder-gray-300"
-                disabled={isTyping}
-              />
-              <Button 
-                onClick={sendMessage}
-                disabled={!inputMessage.trim() || isTyping}
-                className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white px-4"
+        <CardContent className="flex-1 flex flex-col overflow-hidden p-0">
+          {/* Messages Container */}
+          <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
               >
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            {/* Quick Questions */}
-            <div className="flex flex-wrap gap-2 mt-3">
-              {['Bag policy?', 'Food options?', 'Weather?', 'Parking?'].map((question) => (
-                <Button
-                  key={question}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setInputMessage(question)}
-                  disabled={isTyping}
-                  className="text-xs border-pink-300 text-pink-300 hover:bg-pink-500/20 hover:text-white"
+                <div
+                  className={`max-w-[85%] p-4 rounded-2xl ${
+                    message.isBot
+                      ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400/30 rounded-bl-none'
+                      : 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 rounded-br-none'
+                  }`}
                 >
-                  {question}
-                </Button>
-              ))}
+                  <p className="readable-text whitespace-pre-wrap">{message.message}</p>
+                  <p className="text-xs readable-subtitle mt-2 opacity-70">
+                    {formatTime(message.timestamp)}
+                  </p>
+                </div>
+              </div>
+            ))}
+            
+            {loading && (
+              <div className="flex justify-start">
+                <div className="max-w-[85%] p-4 rounded-2xl bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-400/30 rounded-bl-none">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin neon-pink" />
+                    <span className="readable-text">Daisy is typing...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Container */}
+          <div className="border-t border-gray-600/30 p-4 bg-black/20">
+            <div className="flex gap-3 items-end">
+              <div className="flex-1">
+                <Input
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Ask Daisy about the festival, weather, artists, or anything else, sugar!"
+                  className="bg-black/30 border-gray-600 text-white placeholder-gray-400 focus:border-pink-400 transition-colors"
+                  disabled={loading}
+                />
+              </div>
+              <Button
+                onClick={handleSendMessage}
+                disabled={loading || !newMessage.trim()}
+                className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Quick Suggestions */}
+      <div className="grid grid-cols-2 gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setNewMessage("What's the weather like?")}
+          className="text-xs border-cyan-400/50 hover:border-cyan-400 hover:bg-cyan-400/10 transition-colors"
+          disabled={loading}
+        >
+          Weather Update
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setNewMessage("Who are the headliners?")}
+          className="text-xs border-purple-400/50 hover:border-purple-400 hover:bg-purple-400/10 transition-colors"
+          disabled={loading}
+        >
+          Festival Lineup
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setNewMessage("Where's the best food?")}
+          className="text-xs border-yellow-400/50 hover:border-yellow-400 hover:bg-yellow-400/10 transition-colors"
+          disabled={loading}
+        >
+          Food Recommendations
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setNewMessage("What should I bring?")}
+          className="text-xs border-green-400/50 hover:border-green-400 hover:bg-green-400/10 transition-colors"
+          disabled={loading}
+        >
+          Festival Tips
+        </Button>
+      </div>
     </div>
   );
 };
