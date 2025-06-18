@@ -21,6 +21,7 @@ const LocationTracker = () => {
 
   useEffect(() => {
     initializeLocation();
+    fetchCurrentUserStatus();
     fetchGroupLocations();
     
     // Set up interval to update location every 15 seconds
