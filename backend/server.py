@@ -12,9 +12,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # Import services
-from services.chat_service import DaisyDukeBotService
-from services.location_service import LocationService
-from services.weather_service import WeatherService
+from chat_service import DaisyDukeBotService
+from location_service import LocationService
+from weather_service import WeatherService
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
