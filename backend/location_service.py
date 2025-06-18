@@ -197,10 +197,13 @@ class LocationService:
         try:
             timestamp = int(time.time() * 1000)
             
-            self.presence_ref.child(user_id).update({
-                'online': online,
-                'last_seen': timestamp
-            })
+            try:
+                self.presence_ref.child(user_id).update({
+                    'online': online,
+                    'last_seen': timestamp
+                })
+            except Exception as firebase_error:
+                logger.error(f"Firebase presence update failed, continuing with MongoDB: {firebase_error}")
 
             # Update MongoDB
             await self.db.user_presence.update_one(
