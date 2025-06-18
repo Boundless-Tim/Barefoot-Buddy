@@ -215,75 +215,99 @@ class DaisyDukeBotService:
             # Create OpenAI client for function calling
             openai_client = OpenAI(api_key=self.openai_api_key)
             
-            # Get recent chat history for context
-            recent_messages = await self.db.chat_messages.find(
-                {"session_id": session_id}
-            ).sort("timestamp", -1).limit(10).to_list(10)
+            # Check if this is a weather query (handle separately with OpenAI prompt)
+            weather_keywords = ["weather", "temperature", "rain", "sunny", "cloudy", "hot", "cold", "forecast"]
+            is_weather_query = any(keyword in user_message.lower() for keyword in weather_keywords)
             
-            # Build conversation history
-            conversation = [
-                {
-                    "role": "system",
-                    "content": "You are Daisy DukeBot, a helpful festival assistant for Barefoot Country Music Festival in Wildwood, NJ. You can access current weather, group location data, and search for local information to help festival-goers."
-                }
-            ]
-            
-            # Add recent conversation history (reverse to get chronological order)
-            for msg in reversed(recent_messages[1:]):  # Skip the current message
-                role = "assistant" if msg["is_bot"] else "user"
-                conversation.append({"role": role, "content": msg["content"]})
-            
-            # Add current user message
-            conversation.append({"role": "user", "content": user_message})
-
-            # Make request with function calling
-            response = openai_client.chat.completions.create(
-                model="gpt-4o",
-                messages=conversation,
-                tools=tools,
-                tool_choice="auto"
-            )
-
-            # Handle function calls
-            message = response.choices[0].message
-            
-            if message.tool_calls:
-                # Execute function calls
-                for tool_call in message.tool_calls:
-                    function_name = tool_call.function.name
-                    arguments = json.loads(tool_call.function.arguments)
-                    
-                    if function_name == "get_current_weather":
-                        function_result = self._get_current_weather(
-                            arguments.get("location", "Wildwood, NJ")
-                        )
-                    elif function_name == "get_group_locations":
-                        function_result = self._get_group_locations()
-                    elif function_name == "search_web":
-                        function_result = self._search_web(arguments["query"])
-                    else:
-                        function_result = {"error": "Unknown function"}
-                    
-                    # Add function result to conversation
-                    conversation.append({
-                        "role": "assistant",
-                        "content": None,
-                        "tool_calls": [tool_call]
-                    })
-                    conversation.append({
-                        "role": "tool",
-                        "tool_call_id": tool_call.id,
-                        "content": json.dumps(function_result)
-                    })
+            if is_weather_query:
+                # Handle weather query with OpenAI prompt
+                weather_data = self._get_weather_from_openai()
                 
-                # Get final response with function results
-                final_response = openai_client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=conversation
-                )
-                bot_response = final_response.choices[0].message.content
+                # Create a response that incorporates the weather data
+                if "error" not in weather_data:
+                    # Add the weather information to the conversation context
+                    conversation = [
+                        {
+                            "role": "system",
+                            "content": f"You are Daisy DukeBot, a helpful festival assistant for Barefoot Country Music Festival in Wildwood, NJ. The user asked about weather. Weather information: {weather_data.get('weather_response', 'Weather data available')}. Respond in a friendly Southern style and incorporate this weather information naturally."
+                        },
+                        {"role": "user", "content": user_message}
+                    ]
+                    
+                    response = openai_client.chat.completions.create(
+                        model="gpt-4o",
+                        messages=conversation
+                    )
+                    bot_response = response.choices[0].message.content
+                else:
+                    bot_response = "I'm havin' trouble gettin' the weather right now, sugar. But it's always a beautiful day for music at the beach!"
             else:
-                bot_response = message.content
+                # Handle other queries with function calling
+                # Get recent chat history for context
+                recent_messages = await self.db.chat_messages.find(
+                    {"session_id": session_id}
+                ).sort("timestamp", -1).limit(10).to_list(10)
+                
+                # Build conversation history
+                conversation = [
+                    {
+                        "role": "system",
+                        "content": "You are Daisy DukeBot, a helpful festival assistant for Barefoot Country Music Festival in Wildwood, NJ. You can access group location data and search for local information to help festival-goers."
+                    }
+                ]
+                
+                # Add recent conversation history (reverse to get chronological order)
+                for msg in reversed(recent_messages[1:]):  # Skip the current message
+                    role = "assistant" if msg["is_bot"] else "user"
+                    conversation.append({"role": role, "content": msg["content"]})
+                
+                # Add current user message
+                conversation.append({"role": "user", "content": user_message})
+
+                # Make request with function calling
+                response = openai_client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=conversation,
+                    tools=tools,
+                    tool_choice="auto"
+                )
+
+                # Handle function calls
+                message = response.choices[0].message
+                
+                if message.tool_calls:
+                    # Execute function calls
+                    for tool_call in message.tool_calls:
+                        function_name = tool_call.function.name
+                        arguments = json.loads(tool_call.function.arguments)
+                        
+                        if function_name == "get_group_locations":
+                            function_result = self._get_group_locations()
+                        elif function_name == "search_web":
+                            function_result = self._search_web(arguments["query"])
+                        else:
+                            function_result = {"error": "Unknown function"}
+                        
+                        # Add function result to conversation
+                        conversation.append({
+                            "role": "assistant",
+                            "content": None,
+                            "tool_calls": [tool_call]
+                        })
+                        conversation.append({
+                            "role": "tool",
+                            "tool_call_id": tool_call.id,
+                            "content": json.dumps(function_result)
+                        })
+                    
+                    # Get final response with function results
+                    final_response = openai_client.chat.completions.create(
+                        model="gpt-4o",
+                        messages=conversation
+                    )
+                    bot_response = final_response.choices[0].message.content
+                else:
+                    bot_response = message.content
 
             # Store bot response in database
             bot_msg_data = {
