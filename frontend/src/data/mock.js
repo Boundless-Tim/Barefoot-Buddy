@@ -93,10 +93,19 @@ export const mockDrinkRound = {
   ]
 };
 
+export const mockWeather = {
+  temperature: 78,
+  description: 'Sunny',
+  windSpeed: 8,
+  uvIndex: 6,
+  icon: 'sun',
+  daisyComment: "Perfect beach weather, sugar! Time to get your boots sandy!"
+};
+
 export const mockChatHistory = [
   {
     id: '1',
-    message: "Hey sugar! 🤠 Welcome to Barefoot Country! What can this Southern belle help you with today? 🎶",
+    message: "Hey sugar! Welcome to Barefoot Country! What can this Southern belle help you with today?",
     isBot: true,
     timestamp: new Date(Date.now() - 10000).toISOString()
   },
@@ -108,16 +117,16 @@ export const mockChatHistory = [
   },
   {
     id: '3',
-    message: "Well honey, it's lookin' mighty fine! 🌞 Perfect beach weather for dancin' in the sand! Around 78°F with a sweet ocean breeze. Don't forget that sunscreen, darlin'! 💋🏖️",
+    message: "Well honey, it's lookin' mighty fine! Perfect beach weather for dancin' in the sand! Around 78°F with a sweet ocean breeze. Don't forget that sunscreen, darlin'!",
     isBot: true,
     timestamp: new Date(Date.now() - 5000).toISOString()
   }
 ];
 
 export const festivalInfo = {
-  bagPolicy: "Y'all can bring small bags (12\"x6\"x12\") but no large backpacks, sugar! Clear bags are always welcome! 👜✨",
-  food: "We got amazing Southern cuisine, BBQ, seafood, and all the festival favorites! Food trucks galore, honey! 🍖🦐🌮",
-  parking: "Free parking is available bout a quarter mile from the beach entrance. Shuttle service runs every 15 minutes! 🚌🅿️",
-  weather: "Perfect beach weather expected! Sunny skies, gentle ocean breeze, temps in the mid-70s to low 80s! 🌞🏖️",
-  schedule: "Music starts at 2 PM each day and goes till midnight! Check your Setlist tab for all the deets, darlin'! 🎵⏰"
+  bagPolicy: "Y'all can bring small bags (12\"x6\"x12\") but no large backpacks, sugar! Clear bags are always welcome!",
+  food: "We got amazing Southern cuisine, BBQ, seafood, and all the festival favorites! Food trucks galore, honey!",
+  parking: "Free parking is available bout a quarter mile from the beach entrance. Shuttle service runs every 15 minutes!",
+  weather: "Perfect beach weather expected! Sunny skies, gentle ocean breeze, temps in the mid-70s to low 80s!",
+  schedule: "Music starts at 2 PM each day and goes till midnight! Check your Setlist tab for all the deets, darlin'!"
 };
