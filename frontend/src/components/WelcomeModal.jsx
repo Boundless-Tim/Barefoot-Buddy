@@ -58,7 +58,7 @@ const WelcomeModal = ({ isOpen, onNameSubmit }) => {
   if (step === 0) {
     return (
       <Dialog open={isOpen} onOpenChange={() => {}}>
-        <DialogContent className="max-w-md mx-auto glass-effect bg-gradient-to-br from-orange-500/90 to-red-500/90 border-4 neon-border text-white overflow-hidden">
+        <DialogContent className="max-w-sm mx-auto glass-effect bg-gradient-to-br from-orange-500/90 to-red-500/90 border-4 neon-border text-white overflow-hidden p-4">
           {/* Animated background particles */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-4 left-4 w-2 h-2 bg-yellow-300 rounded-full floating opacity-60"></div>
@@ -67,20 +67,20 @@ const WelcomeModal = ({ isOpen, onNameSubmit }) => {
             <div className="absolute bottom-4 right-4 w-4 h-4 bg-white rounded-full floating opacity-30" style={{animationDelay: '0.5s'}}></div>
           </div>
 
-          <DialogHeader className="text-center space-y-6 relative z-10">
+          <DialogHeader className="text-center space-y-4 relative z-10">
             <div className="relative">
-              <div className="text-8xl animate-bounce mb-4">🤠</div>
-              <div className="absolute -top-2 -right-2 text-4xl animate-spin">✨</div>
-              <div className="absolute -bottom-2 -left-2 text-3xl animate-pulse">🎵</div>
+              <div className="text-5xl sm:text-6xl animate-bounce mb-3">🤠</div>
+              <div className="absolute -top-1 -right-1 text-2xl sm:text-3xl animate-spin">✨</div>
+              <div className="absolute -bottom-1 -left-1 text-xl sm:text-2xl animate-pulse">🎵</div>
             </div>
-            <DialogTitle className="text-5xl font-bold festival-font glow-text">
+            <DialogTitle className="text-2xl sm:text-3xl font-bold festival-font glow-text leading-tight">
               Welcome to Barefoot Buddy!
             </DialogTitle>
             <div className="space-y-2">
-              <p className="text-2xl font-medium festival-font text-yellow-100">
+              <p className="text-lg sm:text-xl font-medium festival-font text-yellow-100 leading-tight">
                 Your ultimate Wildwood festival companion! 
               </p>
-              <div className="flex items-center justify-center gap-2 text-3xl">
+              <div className="flex items-center justify-center gap-2 text-2xl">
                 <span className="floating">🏖️</span>
                 <span className="floating" style={{animationDelay: '0.3s'}}>🎶</span>
                 <span className="floating" style={{animationDelay: '0.6s'}}>🍻</span>
@@ -88,13 +88,13 @@ const WelcomeModal = ({ isOpen, onNameSubmit }) => {
             </div>
           </DialogHeader>
           
-          <div className="space-y-6 mt-8 relative z-10">
+          <div className="space-y-4 mt-6 relative z-10">
             <div className="text-center">
-              <p className="text-xl text-yellow-100 font-medium mb-4 festival-font">
+              <p className="text-base sm:text-lg text-yellow-100 font-medium mb-3 festival-font leading-tight">
                 Ready to have the time of your life at Barefoot Country? 
                 Let's get you set up, partner! 
               </p>
-              <div className="flex items-center justify-center gap-1 text-2xl">
+              <div className="flex items-center justify-center gap-1 text-xl">
                 <span className="animate-bounce">🎸</span>
                 <span className="animate-bounce" style={{animationDelay: '0.2s'}}>🎤</span>
                 <span className="animate-bounce" style={{animationDelay: '0.4s'}}>🥁</span>
@@ -103,11 +103,11 @@ const WelcomeModal = ({ isOpen, onNameSubmit }) => {
             
             <Button 
               onClick={() => setStep(1)}
-              className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black py-8 text-2xl font-bold festival-font shadow-2xl transform hover:scale-105 transition-all duration-300 neon-border"
+              className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black py-4 sm:py-6 text-lg sm:text-xl font-bold festival-font shadow-2xl transform hover:scale-105 transition-all duration-300 neon-border"
             >
-              <Sparkles className="h-8 w-8 mr-3" />
+              <Sparkles className="h-6 w-6 mr-2" />
               Let's Get Started! 
-              <span className="text-3xl ml-2">🚀</span>
+              <span className="text-xl ml-2">🚀</span>
             </Button>
           </div>
         </DialogContent>
