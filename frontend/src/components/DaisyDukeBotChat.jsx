@@ -45,11 +45,27 @@ const DaisyDukeBotChat = () => {
       try {
         const historyResponse = await axios.get(`${API_BASE_URL}/chat/history/${newSessionId}`);
         const history = historyResponse.data.messages || [];
-        setMessages(history);
+        
+        if (history.length === 0) {
+          // If no history, add simple welcome message
+          setMessages([{
+            id: '1',
+            message: "Hey there! I'm Daisy DukeBot. What can I help you with?",
+            isBot: true,
+            timestamp: new Date().toISOString()
+          }]);
+        } else {
+          setMessages(history);
+        }
       } catch (historyError) {
         console.error('Error loading chat history:', historyError);
-        // Start with empty messages - let backend handle initial message
-        setMessages([]);
+        // Simple welcome message if history fails
+        setMessages([{
+          id: '1',
+          message: "Hey there! I'm Daisy DukeBot. What can I help you with?",
+          isBot: true,
+          timestamp: new Date().toISOString()
+        }]);
       }
       
     } catch (error) {
