@@ -64,8 +64,10 @@ function App() {
         <div className="max-w-md mx-auto text-center relative">
           <div className="relative z-10">
             <h1 className="text-4xl font-bold festival-font electric-text flex items-center justify-center gap-3 mb-2 bounce-entrance">
-              <span className="text-5xl floating">🤠</span>
-              <span className="neon-blue">Barefoot Buddy</span>
+              <div className="text-3xl font-bold text-red-500 bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent border-2 border-yellow-400 px-3 py-1 rounded-lg neon-border">
+                BAREFOOT
+              </div>
+              <span className="neon-blue">Buddy</span>
             </h1>
             <div className="flex items-center justify-center gap-2 text-white text-lg font-medium">
               <p className="festival-font readable-text">
