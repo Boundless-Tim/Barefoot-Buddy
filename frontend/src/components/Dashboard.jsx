@@ -320,20 +320,20 @@ const Dashboard = ({ setActiveTab }) => {
             </div>
           </div>
 
-          {/* Group Status - Will be real data from location API */}
+          {/* Group Status - Real data from location API */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-green-400" />
-                <span className="readable-text">3 visible</span>
+                <span className="readable-text">{groupData?.visible || 0} visible</span>
               </div>
               <div className="flex items-center gap-2">
                 <Eye className="h-5 w-5 text-purple-400" />
-                <span className="readable-text">1 in ghost mode</span>
+                <span className="readable-text">{groupData?.ghost || 0} in ghost mode</span>
               </div>
             </div>
             <Badge className="bg-gradient-to-r from-green-500 to-teal-500 text-white">
-              4 total
+              {groupData?.total || 0} total
             </Badge>
           </div>
         </CardContent>
