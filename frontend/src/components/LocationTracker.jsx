@@ -323,42 +323,71 @@ const LocationTracker = () => {
         </Card>
       )}
 
-      {/* Festival Map Placeholder */}
+      {/* Festival Map */}
       <Card className="electric-glass border-2 border-cyan-400 neon-border">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg festival-font neon-cyan">Festival Map</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="relative electric-gradient rounded-xl h-48 flex items-center justify-center overflow-hidden shadow-inner border border-cyan-300">
-            <div className="absolute inset-0 opacity-20">
-              {/* User locations as dots */}
-              {visibleUsers.slice(0, 5).map((user, index) => (
-                <div
-                  key={user.id}
-                  className={`absolute w-4 h-4 rounded-full border-2 border-white shadow-lg animate-pulse ${
-                    index % 3 === 0 ? 'bg-green-500' : index % 3 === 1 ? 'bg-blue-500' : 'bg-yellow-500'
-                  }`}
-                  style={{
-                    top: `${20 + (index * 15)}%`,
-                    left: `${30 + (index * 10)}%`,
-                    animationDelay: `${index * 0.5}s`
-                  }}
-                ></div>
-              ))}
-              
-              {/* Current user location */}
-              {currentUser && !ghostMode && (
-                <div 
-                  className="absolute w-5 h-5 bg-red-500 rounded-full border-2 border-white shadow-lg animate-bounce"
-                  style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
-                ></div>
-              )}
-            </div>
-            
-            <div className="relative z-10 text-center">
-              <p className="text-lg font-bold neon-cyan">Interactive Map Loading...</p>
-              <p className="text-sm readable-subtitle">Real-time location tracking active</p>
-            </div>
+          <div className="relative rounded-xl h-64 overflow-hidden border border-cyan-300">
+            {MAPBOX_TOKEN ? (
+              <Map
+                mapboxAccessToken={MAPBOX_TOKEN}
+                initialViewState={{
+                  longitude: currentUser ? currentUser.lng : -74.8157, // Wildwood, NJ
+                  latitude: currentUser ? currentUser.lat : 39.0056,
+                  zoom: currentUser ? 16 : 14
+                }}
+                style={{ width: '100%', height: '100%' }}
+                mapStyle="mapbox://styles/mapbox/dark-v11"
+              >
+                <NavigationControl position="top-right" />
+                
+                {/* Current User Marker */}
+                {currentUser && !ghostMode && (
+                  <Marker
+                    longitude={currentUser.lng}
+                    latitude={currentUser.lat}
+                    anchor="bottom"
+                  >
+                    <div className="relative">
+                      <div className="w-6 h-6 bg-red-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
+                      <div className="absolute -top-2 -left-2 w-10 h-10 bg-red-500/30 rounded-full animate-ping"></div>
+                      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                        You
+                      </div>
+                    </div>
+                  </Marker>
+                )}
+                
+                {/* Other Users Markers */}
+                {visibleUsers.map((user, index) => (
+                  <Marker
+                    key={user.id}
+                    longitude={user.lng}
+                    latitude={user.lat}
+                    anchor="bottom"
+                  >
+                    <div className="relative">
+                      <div className={`w-5 h-5 border-2 border-white rounded-full shadow-lg ${
+                        index % 3 === 0 ? 'bg-green-500' : index % 3 === 1 ? 'bg-blue-500' : 'bg-yellow-500'
+                      }`}></div>
+                      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                        {user.name}
+                      </div>
+                    </div>
+                  </Marker>
+                ))}
+              </Map>
+            ) : (
+              <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-800 to-gray-900">
+                <div className="text-center">
+                  <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-lg font-bold neon-cyan">Map Unavailable</p>
+                  <p className="text-sm readable-subtitle">Mapbox token not configured</p>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
