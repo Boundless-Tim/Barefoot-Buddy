@@ -135,17 +135,20 @@ backend:
         agent: "testing"
         comment: "Firebase authentication has issues with unauthorized requests, but the service gracefully falls back to MongoDB storage. All location tracking endpoints are working correctly. Added MockFirebaseReference for testing to ensure API functionality even when Firebase is unavailable."
 
-  - task: "Weather Service"
+  - task: "Smart Daisy Functionality"
     implemented: true
     working: true
-    file: "weather_service.py"
+    file: "chat_service.py"
     stuck_count: 0
-    priority: "medium"
+    priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "main"
-        comment: "WeatherService implemented with OpenWeatherMap API structure. Currently using mock data with Daisy comments until real API key provided. Fallback mechanism working correctly."
+        comment: "Updated Smart Daisy implementation with OpenAI prompt-based weather system using prompt ID pmpt_685238ede11881938cf93dbedcd19afa0c4dc65de6a4cfda. Also integrated LangSearch API for web search functionality. Smart Daisy now has: 1) OpenAI prompt-based weather responses, 2) Group location statistics from MongoDB, 3) LangSearch web search for local business recommendations."
+      - working: true
+        agent: "testing"
+        comment: "Comprehensive testing confirms Smart Daisy functionality is working correctly. Weather queries trigger OpenAI prompt-based responses with Southern style. Web search queries successfully use LangSearch API to provide local business recommendations. Location queries attempt to access group location data. All core functionality is working with only minor inconsistencies in Southern personality for general chat responses."
 
   - task: "FastAPI Backend Server"
     implemented: true
